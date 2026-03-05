@@ -467,7 +467,7 @@ async function handleOnboarding(request, env, origin) {
     return json({ error: 'Invalid JSON' }, 400, origin);
   }
 
-  const { email, resendApiKey, sessionId } = body;
+  const { email, resendApiKey, senderName, sessionId } = body;
   if (!email || !resendApiKey) {
     return json({ error: 'Missing email or resendApiKey' }, 400, origin);
   }
@@ -478,6 +478,7 @@ async function handleOnboarding(request, env, origin) {
 <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
   <tr><td style="padding:8px 16px 8px 0;color:#888;">メールアドレス</td><td style="padding:8px 0;font-weight:bold;">${escapeHtml(email)}</td></tr>
   <tr><td style="padding:8px 16px 8px 0;color:#888;">Resend APIキー</td><td style="padding:8px 0;font-family:monospace;">${escapeHtml(resendApiKey)}</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">送信者名</td><td style="padding:8px 0;">${escapeHtml(senderName || '—')}</td></tr>
   <tr><td style="padding:8px 16px 8px 0;color:#888;">セッションID</td><td style="padding:8px 0;">${escapeHtml(sessionId || '—')}</td></tr>
 </table>
 `;

@@ -13,6 +13,7 @@
   :root {
     --ink: #1c1814;
     --paper: #f4ede0;
+    --paper-dark: #e8dece;
     --gold: #b8924a;
     --gold-light: #d4b07a;
     --red: #8b1a1a;
@@ -20,6 +21,7 @@
     --gray-light: #9b9088;
     --white: #fdfaf5;
     --border: rgba(28,24,20,0.15);
+    --green: #2e7d32;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -30,144 +32,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    padding: 2rem 1rem;
   }
-  .onb-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 3rem 2.5rem;
-    max-width: 560px;
-    width: 100%;
-    box-shadow: 0 8px 32px rgba(28,24,20,0.08);
-  }
-  .onb-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--paper);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-  .onb-title {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    line-height: 1.5;
-  }
-  .onb-desc {
-    font-size: 0.9rem;
-    color: var(--gray);
-    line-height: 1.8;
-    margin-bottom: 2rem;
-  }
-  .onb-guide {
-    background: var(--paper);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2rem;
-    font-size: 0.85rem;
-    line-height: 1.8;
-    color: var(--gray);
-  }
-  .onb-guide-title {
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 0.5rem;
-  }
-  .onb-guide a {
-    color: var(--gold);
-    text-decoration: underline;
-  }
-  .onb-guide ol {
-    padding-left: 1.5rem;
-    margin-top: 0.5rem;
-  }
-  .onb-guide li {
-    margin-bottom: 0.25rem;
-  }
-  .onb-form { margin-top: 0; }
-  .onb-label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: var(--ink);
-  }
-  .onb-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: 'Noto Sans JP', sans-serif;
-    background: var(--white);
-    color: var(--ink);
-    margin-bottom: 1rem;
-    transition: border-color 0.2s;
-  }
-  .onb-input:focus {
-    outline: none;
-    border-color: var(--gold);
-  }
-  .onb-input.error {
-    border-color: var(--red);
-  }
-  .onb-input-hint {
-    font-size: 0.75rem;
-    color: var(--gray-light);
-    margin-top: -0.5rem;
-    margin-bottom: 1rem;
-  }
-  .onb-submit {
-    display: block;
-    width: 100%;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    padding: 0.9rem;
-    font-size: 1rem;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 500;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .onb-submit:hover { opacity: 0.85; }
-  .onb-submit:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .onb-message {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    display: none;
-  }
-  .onb-message.success {
-    background: #e8f5e9;
-    color: #2e7d32;
-    display: block;
-  }
-  .onb-message.error {
-    background: #fbe9e7;
-    color: var(--red);
-    display: block;
-  }
+
+  /* ===== ロゴ ===== */
   .logo {
     font-family: 'Noto Serif JP', serif;
     font-size: 1rem;
     font-weight: 600;
     color: var(--ink);
     text-decoration: none;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-align: center;
   }
   .logo-en {
@@ -178,41 +53,338 @@
     color: var(--gray);
     display: block;
   }
-  .onb-done {
+
+  /* ===== プログレスバー ===== */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2rem;
+    max-width: 480px;
+    width: 100%;
+  }
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    white-space: nowrap;
+  }
+  .progress-step.active { color: var(--ink); font-weight: 500; }
+  .progress-step.done { color: var(--green); }
+  .progress-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .progress-step.active .progress-num {
+    background: var(--ink);
+    color: var(--white);
+    border-color: var(--ink);
+  }
+  .progress-step.done .progress-num {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+  }
+  .progress-line {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    margin: 0 0.25rem;
+    min-width: 8px;
+  }
+  .progress-line.done { background: var(--green); }
+
+  /* ===== カード ===== */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(28,24,20,0.08);
+  }
+  @media (max-width: 560px) {
+    .card { padding: 2rem 1.25rem; }
+  }
+
+  /* ===== ステップ共通 ===== */
+  .step { display: none; }
+  .step.active { display: block; }
+  .step-badge {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+  .step-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .step-text {
+    font-size: 0.92rem;
+    color: var(--gray);
+    line-height: 2;
+    margin-bottom: 1.5rem;
+  }
+  .step-text strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .step-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--gray-light);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ===== ボタン ===== */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
     text-align: center;
+    text-decoration: none;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-outline {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+    padding: 0.85rem;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 0.75rem;
+  }
+  .btn-outline:hover { border-color: var(--ink); }
+
+  .btn-external {
+    display: block;
+    width: 100%;
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-align: center;
+    text-decoration: none;
+  }
+  .btn-external:hover { opacity: 0.85; }
+
+  /* ===== つまずいたら（折りたたみ） ===== */
+  .trouble {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+  .trouble-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--gray-light);
+    font-size: 0.82rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+  }
+  .trouble-toggle:hover { color: var(--gray); }
+  .trouble-arrow {
+    transition: transform 0.2s;
+    font-size: 0.65rem;
+  }
+  .trouble.open .trouble-arrow { transform: rotate(90deg); }
+  .trouble-content {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 1rem;
+    background: var(--paper);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+  .trouble.open .trouble-content { display: block; }
+  .trouble-item {
+    margin-bottom: 0.5rem;
+  }
+  .trouble-item:last-child { margin-bottom: 0; }
+  .trouble-q { font-weight: 500; color: var(--ink); }
+  .trouble-a { margin-left: 1rem; }
+
+  /* ===== 手順リスト ===== */
+  .instruction-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+  .instruction-list li {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .instruction-list li:last-child { margin-bottom: 0; }
+  .instruction-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1rem;
+  }
+
+  /* ===== 警告 ===== */
+  .warning {
+    background: #fff8e1;
+    border-left: 3px solid var(--gold);
+    padding: 0.85rem 1rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .warning-icon { margin-right: 0.3rem; }
+
+  /* ===== フォーム ===== */
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+  .form-hint {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    margin-top: 0.25rem;
+  }
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: var(--gold); }
+  .form-input.error { border-color: var(--red); }
+  .form-error {
+    font-size: 0.78rem;
+    color: var(--red);
+    margin-top: 0.25rem;
     display: none;
   }
-  .onb-done.show { display: block; }
-  .onb-done-icon {
-    width: 64px;
-    height: 64px;
+  .form-error.show { display: block; }
+
+  /* ===== 送信メッセージ ===== */
+  .submit-message {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .submit-message.error {
+    background: #fbe9e7;
+    color: var(--red);
+    display: block;
+  }
+
+  /* ===== 完了画面 ===== */
+  .done { display: none; text-align: center; }
+  .done.show { display: block; }
+  .done-icon {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background: var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 2.5rem;
     margin: 0 auto 1.5rem;
   }
-  .onb-done-title {
+  .done-title {
     font-family: 'Noto Serif JP', serif;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 600;
     margin-bottom: 1rem;
+    line-height: 1.5;
   }
-  .onb-done-text {
-    font-size: 0.9rem;
+  .done-text {
+    font-size: 0.92rem;
     color: var(--gray);
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
+    line-height: 2;
+    margin-bottom: 2rem;
   }
-  .onb-back-link {
-    display: inline-block;
+  .done-text strong { color: var(--ink); font-weight: 500; }
+  .done-back {
     color: var(--gray);
     font-size: 0.85rem;
     text-decoration: none;
   }
-  .onb-back-link:hover { color: var(--ink); }
+  .done-back:hover { color: var(--ink); }
 </style>
 </head>
 <body>
@@ -222,87 +394,349 @@
   <span class="logo-en">INDUSTRY PAPER MAKER</span>
 </a>
 
-<div class="onb-card">
-  <!-- フォーム画面 -->
-  <div id="onbForm">
-    <div class="onb-icon">📋</div>
-    <h1 class="onb-title">配信設定をはじめましょう</h1>
-    <p class="onb-desc">
-      メール配信にはResendを使用します。<br>
-      APIキーを登録いただければ、あとは私たちが設定を進めます。
+<!-- ===== プログレスバー ===== -->
+<div class="progress" id="progressBar">
+  <div class="progress-step active" data-step="1"><span class="progress-num">1</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" data-step="2"><span class="progress-num">2</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" data-step="3"><span class="progress-num">3</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" data-step="4"><span class="progress-num">4</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" data-step="5"><span class="progress-num">5</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" data-step="6"><span class="progress-num">6</span></div>
+</div>
+
+<div class="card" id="mainCard">
+
+  <!-- ===== STEP 1: はじめに ===== -->
+  <div class="step active" id="step1">
+    <div class="step-badge">STEP 1 / 6</div>
+    <h1 class="step-title">配信設定をはじめましょう</h1>
+    <p class="step-text">
+      これから、メール配信に必要な設定をご案内します。<br><br>
+      <strong>Resend（レゼンド）</strong>という無料のメール配信サービスに<br>
+      アカウントを作っていただくだけです。<br><br>
+      難しい操作はありません。<br>
+      画面の指示にそって進めれば大丈夫です。
+    </p>
+    <div class="step-time">⏱ 所要時間：約5分</div>
+    <button class="btn-primary" onclick="goTo(2)">さっそく始める →</button>
+  </div>
+
+  <!-- ===== STEP 2: Resendにアクセス ===== -->
+  <div class="step" id="step2">
+    <div class="step-badge">STEP 2 / 6</div>
+    <h1 class="step-title">Resendのサイトを開きます</h1>
+    <p class="step-text">
+      下のボタンを押すと、Resendのサイトが<br>
+      <strong>新しいタブ</strong>で開きます。<br><br>
+      <strong>このページは閉じずに</strong>、そのまま残しておいてください。<br>
+      あとでこのページに戻ってきます。
+    </p>
+    <div class="step-time">⏱ このステップ：約30秒</div>
+    <a href="https://resend.com/signup" target="_blank" rel="noopener" class="btn-external">Resendを開く →</a>
+    <button class="btn-outline" onclick="goTo(3)">開けました → 次へ</button>
+
+    <div class="trouble" id="trouble2">
+      <button class="trouble-toggle" onclick="toggleTrouble('trouble2')">
+        <span class="trouble-arrow">▶</span> つまずいたら
+      </button>
+      <div class="trouble-content">
+        <div class="trouble-item">
+          <div class="trouble-q">ページが英語で表示される</div>
+          <div class="trouble-a">→ 問題ありません。そのまま進めてください。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">ボタンを押しても何も起きない</div>
+          <div class="trouble-a">→ ブラウザがポップアップをブロックしている場合があります。画面上部に「ポップアップがブロックされました」という表示が出ていたら「許可」を押してください。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 3: アカウント登録 ===== -->
+  <div class="step" id="step3">
+    <div class="step-badge">STEP 3 / 6</div>
+    <h1 class="step-title">Resendに登録する</h1>
+    <p class="step-text">
+      Resendのページで、以下を入力してください。
+    </p>
+    <ul class="instruction-list">
+      <li>
+        <span class="instruction-num">1</span>
+        <span><strong>メールアドレス</strong>（普段使っているもの）</span>
+      </li>
+      <li>
+        <span class="instruction-num">2</span>
+        <span><strong>パスワード</strong>（新しく決めてください）</span>
+      </li>
+      <li>
+        <span class="instruction-num">3</span>
+        <span>入力したら <strong>「Sign Up」ボタン</strong>を押す</span>
+      </li>
+      <li>
+        <span class="instruction-num">4</span>
+        <span><strong>確認メール</strong>が届いたらリンクをクリック</span>
+      </li>
+    </ul>
+    <div class="step-time">⏱ このステップ：約2分</div>
+    <button class="btn-primary" onclick="goTo(4)">登録できました → 次へ</button>
+
+    <div class="trouble" id="trouble3">
+      <button class="trouble-toggle" onclick="toggleTrouble('trouble3')">
+        <span class="trouble-arrow">▶</span> つまずいたら
+      </button>
+      <div class="trouble-content">
+        <div class="trouble-item">
+          <div class="trouble-q">「Sign Up」ボタンが見つからない</div>
+          <div class="trouble-a">→ ページの中央、またはGoogleアカウントやGitHubアカウントでの登録ボタンの下にあります。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">確認メールが届かない</div>
+          <div class="trouble-a">→ 迷惑メールフォルダを確認してください。「Resend」という送信元からメールが届きます。5分待っても届かなければ、もう一度「Sign Up」からやり直してください。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">すでにResendのアカウントを持っている</div>
+          <div class="trouble-a">→ そのままログインして次のステップへ進んでください。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 4: API Keysページへ ===== -->
+  <div class="step" id="step4">
+    <div class="step-badge">STEP 4 / 6</div>
+    <h1 class="step-title">API Keysページを開く</h1>
+    <p class="step-text">
+      ログイン後の画面で、<br>
+      左側のメニューを見てください。
+    </p>
+    <ul class="instruction-list">
+      <li>
+        <span class="instruction-num">1</span>
+        <span><strong>「API Keys」</strong>という文字をクリック</span>
+      </li>
+      <li>
+        <span class="instruction-num">2</span>
+        <span>右上の <strong>「+ Create API Key」</strong> ボタンを押す</span>
+      </li>
+    </ul>
+    <div class="step-time">⏱ このステップ：約30秒</div>
+    <button class="btn-primary" onclick="goTo(5)">押せました → 次へ</button>
+
+    <div class="trouble" id="trouble4">
+      <button class="trouble-toggle" onclick="toggleTrouble('trouble4')">
+        <span class="trouble-arrow">▶</span> つまずいたら
+      </button>
+      <div class="trouble-content">
+        <div class="trouble-item">
+          <div class="trouble-q">左メニューが見当たらない</div>
+          <div class="trouble-a">→ 画面左上の「≡」マーク（三本線）を押してください。メニューが開きます。スマートフォンで見ている場合は特にこの操作が必要です。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">「API Keys」が見つからない</div>
+          <div class="trouble-a">→ メニューの中に鍵のアイコンと一緒に「API Keys」と書かれています。見つからない場合は、Resendのトップページ左上のメニューを開いて探してください。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 5: APIキー作成 ===== -->
+  <div class="step" id="step5">
+    <div class="step-badge">STEP 5 / 6</div>
+    <h1 class="step-title">APIキーを作成する</h1>
+    <p class="step-text">
+      「Create API Key」を押した後の画面で、<br>
+      以下のように設定してください。
+    </p>
+    <ul class="instruction-list">
+      <li>
+        <span class="instruction-num">1</span>
+        <span><strong>Name（名前）</strong>に <strong>tsukuru</strong> と入力</span>
+      </li>
+      <li>
+        <span class="instruction-num">2</span>
+        <span><strong>Permission</strong>は <strong>Full Access</strong> を選択</span>
+      </li>
+      <li>
+        <span class="instruction-num">3</span>
+        <span><strong>「Add」ボタン</strong>を押す</span>
+      </li>
+    </ul>
+    <p class="step-text">
+      画面に <strong>「re_」で始まる長い文字列</strong>が表示されたら成功です！
+    </p>
+    <div class="warning">
+      <span class="warning-icon">⚠️</span>
+      <strong>重要：</strong>この画面を閉じると、このキーは二度と表示されません。<br>
+      まだ閉じずに、次のステップで入力欄に貼り付けてください。
+    </div>
+    <button class="btn-primary" onclick="goTo(6)">表示されました → 次へ</button>
+
+    <div class="trouble" id="trouble5">
+      <button class="trouble-toggle" onclick="toggleTrouble('trouble5')">
+        <span class="trouble-arrow">▶</span> つまずいたら
+      </button>
+      <div class="trouble-content">
+        <div class="trouble-item">
+          <div class="trouble-q">うっかり画面を閉じてしまった</div>
+          <div class="trouble-a">→ 大丈夫です。もう一度「API Keys」ページに戻り、「+ Create API Key」から新しいキーを作り直せます。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">「Permission」の選択肢が分からない</div>
+          <div class="trouble-a">→ 「Full Access」と「Sending Access」の2つがあります。<strong>Full Access</strong>を選んでください。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 6: フォーム入力 ===== -->
+  <div class="step" id="step6">
+    <div class="step-badge">STEP 6 / 6</div>
+    <h1 class="step-title">APIキーを貼り付ける</h1>
+    <p class="step-text">
+      先ほどの <strong>「re_」で始まる文字列</strong>をコピーして、<br>
+      下の入力欄に貼り付けてください。
     </p>
 
-    <div class="onb-guide">
-      <div class="onb-guide-title">Resend APIキーの取得方法</div>
-      <ol>
-        <li><a href="https://resend.com/signup" target="_blank" rel="noopener">Resendに無料登録</a></li>
-        <li>ダッシュボードの「API Keys」を開く</li>
-        <li>「Create API Key」で新しいキーを発行</li>
-        <li>キーをコピーして下の入力欄に貼り付け</li>
-      </ol>
+    <div style="background:var(--paper);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.82rem;line-height:1.8;color:var(--gray);">
+      <strong style="color:var(--ink);">コピーのしかた</strong><br>
+      ・Resend画面上の<strong>コピーボタン</strong>（四角が2つ重なったアイコン）をクリック<br>
+      ・または、文字列を選択して右クリック →「コピー」<br><br>
+      <strong style="color:var(--ink);">貼り付けのしかた</strong><br>
+      ・入力欄をクリック → 右クリック →「貼り付け」<br>
+      ・または <strong>Cmd + V</strong>（Mac）/ <strong>Ctrl + V</strong>（Windows）
     </div>
 
-    <form class="onb-form" id="onboardingForm">
-      <label class="onb-label" for="onbEmail">メールアドレス</label>
-      <input type="email" class="onb-input" id="onbEmail" placeholder="your@email.com" required>
+    <form id="onboardingForm">
+      <div class="form-group">
+        <label class="form-label" for="onbEmail">メールアドレス</label>
+        <input type="email" class="form-input" id="onbEmail" placeholder="your@email.com" required>
+        <div class="form-error" id="emailError">メールアドレスを正しく入力してください。</div>
+      </div>
 
-      <label class="onb-label" for="onbApiKey">Resend APIキー</label>
-      <input type="text" class="onb-input" id="onbApiKey" placeholder="re_xxxxxxxxxx" required>
-      <div class="onb-input-hint">re_ で始まる文字列です</div>
+      <div class="form-group">
+        <label class="form-label" for="onbApiKey">Resend APIキー</label>
+        <input type="text" class="form-input" id="onbApiKey" placeholder="re_xxxxxxxxxx" required>
+        <div class="form-hint">re_ で始まる文字列です</div>
+        <div class="form-error" id="apiKeyError">APIキーは re_ で始まる文字列を入力してください。</div>
+      </div>
 
-      <button type="submit" class="onb-submit" id="onbSubmit">登録する</button>
+      <div class="form-group">
+        <label class="form-label" for="onbSenderName">送信者名（配信元として表示されます）</label>
+        <input type="text" class="form-input" id="onbSenderName" placeholder="例：山田太郎（山田不動産）">
+        <div class="form-hint">メールの差出人名になります</div>
+      </div>
 
-      <div class="onb-message" id="onbMessage"></div>
+      <button type="submit" class="btn-primary" id="onbSubmit">設定を完了する</button>
+      <div class="submit-message" id="submitMessage"></div>
     </form>
   </div>
 
-  <!-- 完了画面 -->
-  <div class="onb-done" id="onbDone">
-    <div class="onb-done-icon">✅</div>
-    <h2 class="onb-done-title">登録が完了しました！</h2>
-    <p class="onb-done-text">
-      APIキーを確認次第、配信設定を進めます。<br>
-      準備が整い次第、メールでご連絡いたします。
+  <!-- ===== 完了画面 ===== -->
+  <div class="done" id="doneScreen">
+    <div class="done-icon">🎉</div>
+    <h2 class="done-title">設定完了です！</h2>
+    <p class="done-text">
+      あとは<strong>すべてこちらで対応</strong>します。<br><br>
+      <strong>3営業日以内</strong>に初回号のサンプルを<br>
+      メールでお送りします。<br><br>
+      ご不明な点があれば、<br>
+      お気軽にメールでご連絡ください。
     </p>
-    <a href="./" class="onb-back-link">← トップページに戻る</a>
+    <a href="./" class="done-back">← トップページに戻る</a>
   </div>
+
 </div>
 
 <script>
   var WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
-  var form = document.getElementById('onboardingForm');
-  var submitBtn = document.getElementById('onbSubmit');
-  var messageEl = document.getElementById('onbMessage');
+  var currentStep = 1;
+  var totalSteps = 6;
 
   // URLパラメータからsession_idを取得
   var params = new URLSearchParams(window.location.search);
   var sessionId = params.get('session_id') || '';
+
+  // ステップ遷移
+  function goTo(step) {
+    // 現在のステップを非表示
+    document.getElementById('step' + currentStep).classList.remove('active');
+    // 新しいステップを表示
+    currentStep = step;
+    document.getElementById('step' + currentStep).classList.add('active');
+    // プログレスバー更新
+    updateProgress();
+    // スクロールトップ
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    var steps = document.querySelectorAll('.progress-step');
+    var lines = document.querySelectorAll('.progress-line');
+    steps.forEach(function(el, i) {
+      var stepNum = i + 1;
+      el.classList.remove('active', 'done');
+      if (stepNum < currentStep) {
+        el.classList.add('done');
+        el.querySelector('.progress-num').textContent = '✓';
+      } else if (stepNum === currentStep) {
+        el.classList.add('active');
+        el.querySelector('.progress-num').textContent = stepNum;
+      } else {
+        el.querySelector('.progress-num').textContent = stepNum;
+      }
+    });
+    lines.forEach(function(el, i) {
+      el.classList.remove('done');
+      if (i < currentStep - 1) el.classList.add('done');
+    });
+  }
+
+  // つまずいたら折りたたみ
+  function toggleTrouble(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  // フォーム送信
+  var form = document.getElementById('onboardingForm');
+  var submitBtn = document.getElementById('onbSubmit');
+  var submitMsg = document.getElementById('submitMessage');
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
 
     var email = document.getElementById('onbEmail').value.trim();
     var apiKey = document.getElementById('onbApiKey').value.trim();
+    var senderName = document.getElementById('onbSenderName').value.trim();
+    var hasError = false;
 
     // バリデーション
+    document.getElementById('emailError').classList.remove('show');
+    document.getElementById('apiKeyError').classList.remove('show');
+    document.getElementById('onbEmail').classList.remove('error');
+    document.getElementById('onbApiKey').classList.remove('error');
+
     if (!email || !email.includes('@')) {
       document.getElementById('onbEmail').classList.add('error');
-      return;
+      document.getElementById('emailError').classList.add('show');
+      hasError = true;
     }
-    document.getElementById('onbEmail').classList.remove('error');
-
     if (!apiKey || !apiKey.startsWith('re_')) {
       document.getElementById('onbApiKey').classList.add('error');
-      showMessage('APIキーは re_ で始まる文字列を入力してください。', 'error');
-      return;
+      document.getElementById('apiKeyError').classList.add('show');
+      hasError = true;
     }
-    document.getElementById('onbApiKey').classList.remove('error');
+    if (hasError) return;
 
     // 送信
     submitBtn.disabled = true;
     submitBtn.textContent = '送信中…';
-    messageEl.className = 'onb-message';
-    messageEl.style.display = 'none';
+    submitMsg.className = 'submit-message';
+    submitMsg.style.display = 'none';
 
     fetch(WORKER_URL + '/onboarding', {
       method: 'POST',
@@ -310,6 +744,7 @@
       body: JSON.stringify({
         email: email,
         resendApiKey: apiKey,
+        senderName: senderName,
         sessionId: sessionId,
       }),
     })
@@ -317,25 +752,31 @@
     .then(function(data) {
       if (data.ok) {
         // 完了画面を表示
-        document.getElementById('onbForm').style.display = 'none';
-        document.getElementById('onbDone').classList.add('show');
+        document.querySelectorAll('.step').forEach(function(el) { el.classList.remove('active'); });
+        document.getElementById('doneScreen').classList.add('show');
+        // プログレスバーを全完了に
+        document.querySelectorAll('.progress-step').forEach(function(el) {
+          el.classList.remove('active');
+          el.classList.add('done');
+          el.querySelector('.progress-num').textContent = '✓';
+        });
+        document.querySelectorAll('.progress-line').forEach(function(el) {
+          el.classList.add('done');
+        });
       } else {
-        showMessage('送信に失敗しました。もう一度お試しください。', 'error');
+        submitMsg.textContent = '送信に失敗しました。もう一度お試しください。';
+        submitMsg.className = 'submit-message error';
         submitBtn.disabled = false;
-        submitBtn.textContent = '登録する';
+        submitBtn.textContent = '設定を完了する';
       }
     })
     .catch(function() {
-      showMessage('通信エラーが発生しました。もう一度お試しください。', 'error');
+      submitMsg.textContent = '通信エラーが発生しました。もう一度お試しください。';
+      submitMsg.className = 'submit-message error';
       submitBtn.disabled = false;
-      submitBtn.textContent = '登録する';
+      submitBtn.textContent = '設定を完了する';
     });
   });
-
-  function showMessage(text, type) {
-    messageEl.textContent = text;
-    messageEl.className = 'onb-message ' + type;
-  }
 </script>
 </body>
 </html>
