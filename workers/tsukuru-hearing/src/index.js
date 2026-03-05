@@ -567,7 +567,7 @@ ${revisionInstructions}` : ''}`;
       },
       body: JSON.stringify({
         model: ARTICLE_MODEL,
-        max_tokens: 4000,
+        max_tokens: 16000,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
@@ -588,9 +588,13 @@ ${revisionInstructions}` : ''}`;
     }
 
     // web_search使用時はcontent配列に複数ブロック（web_search_tool_result, text等）が返る
-    // 最後のtextブロックが記事HTML
+    // textブロックを全て結合してHTMLを抽出
     const textBlocks = (result.content || []).filter(b => b.type === 'text');
-    const html = textBlocks.length > 0 ? textBlocks[textBlocks.length - 1].text : '';
+    const fullText = textBlocks.map(b => b.text).join('');
+    // HTML部分を抽出（<html...から</html>まで、または<!DOCTYPE...から</html>まで）
+    const htmlMatch = fullText.match(/(<!DOCTYPE[\s\S]*?<\/html>|<html[\s\S]*?<\/html>)/i);
+    const html = htmlMatch ? htmlMatch[0] : fullText;
+    console.log(`Article HTML extracted: ${html.length} chars, textBlocks: ${textBlocks.length}, fullText: ${fullText.length} chars`);
     return html;
 
   } catch (err) {
