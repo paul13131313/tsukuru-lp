@@ -2090,7 +2090,7 @@
   // ===== HEARING CHAT =====
   (function() {
     const WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
-    const FORMSPREE_URL = 'https://formspree.io/f/mbdzrgal';
+    const NOTIFY_URL = WORKER_URL + '/notify';
     const STEPS = [
       { key: 'industry', question: 'どんなお仕事をされていますか？', type: 'chips',
         options: ['不動産業', '税理士・会計士', '社労士・弁護士', '製造業・商社', '地域団体・商工会', 'その他'] },
@@ -2370,21 +2370,20 @@
       var area = document.getElementById('hInput');
       if (area) area.innerHTML = '';
 
-      // Formspreeに送信
+      // Workerの/notifyエンドポイント経由でResendメール送信
       var planKey = PLAN_MAP[answers.audience] || 'standard';
-      fetch(FORMSPREE_URL, {
+      fetch(NOTIFY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          _subject: '【業界紙つくーる】ヒアリング完了 — ' + answers.industry,
           email: email,
-          業種: answers.industry,
-          目的: answers.purpose,
-          配信規模: answers.audience,
-          頻度: answers.frequency,
-          タイトル案: answers.title || '未定',
-          トーン: answers.tone,
-          おすすめプラン: PLAN_INFO[planKey].name,
+          industry: answers.industry,
+          purpose: answers.purpose,
+          audience: answers.audience,
+          frequency: answers.frequency,
+          title: answers.title || '未定',
+          tone: answers.tone,
+          plan: PLAN_INFO[planKey].name,
         }),
       }).catch(function() {});
 
