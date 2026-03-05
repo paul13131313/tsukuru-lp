@@ -729,6 +729,26 @@
     border-left-color: #d4a574;
   }
 
+  .sample-preview--nichijou {
+    background: #f8f6f2;
+    border-color: #c4b8a8;
+  }
+  .sample-preview--nichijou .sample-masthead {
+    font-family: 'Noto Serif JP', serif;
+    color: #2c2420;
+    letter-spacing: 0.08em;
+  }
+  .sample-preview--nichijou .sample-header-row {
+    border-bottom: 2px solid #2c2420;
+  }
+  .sample-preview--nichijou .sample-lead-headline {
+    border-left-color: #c4956a;
+    color: #2c2420;
+  }
+  .sample-preview--nichijou .sample-col h4 {
+    color: #6b5a48;
+  }
+
   .sample-label-bottom {
     text-align: center;
     margin-top: 20px;
@@ -1056,6 +1076,13 @@
   }
 
   /* ===== RESPONSIVE ===== */
+  .case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
   @media (max-width: 768px) {
     .nav-links { display: none; }
     .hero-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -1067,6 +1094,7 @@
     .footer-inner { flex-direction: column; }
     .container { padding: 0 20px; }
     .section { padding: 80px 0; }
+    .case-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -1225,7 +1253,7 @@
         <div class="step-content">
           <span class="step-tag">Monthly</span>
           <h3>自動生成 → 確認 → 配信</h3>
-          <p>AIが業界ニュースを収集・執筆。お客様が内容を確認（15分程度）し、承認後に自動配信されます。あとは読者の反応を楽しむだけ。</p>
+          <p>AIがRSSフィード・公開ニュースソースから業界情報を収集し、記事を執筆。お客様が内容を確認（15分程度）し、承認後に配信されます。あとは読者の反応を楽しむだけ。</p>
         </div>
       </div>
     </div>
@@ -1240,6 +1268,7 @@
       <h2 class="section-title">写真がなくても、<br>プロの仕上がりに。</h2>
       <p class="section-subtitle">業界紙に必要なビジュアルは、3つのスタイルからお選びいただけます。</p>
     </div>
+    <p class="reveal" style="font-size: 0.78rem; color: var(--gray-light); text-align: center; margin-bottom: 32px;">※ スタータープランは1配信あたり画像1枚まで。スタンダード以上は最大3枚まで対応。お客様ご提供の写真を使用することも可能です。</p>
     <div class="image-options reveal">
       <div class="image-option">
         <div class="image-option-icon">🤖</div>
@@ -1277,6 +1306,7 @@
         <button class="tab-btn" data-tab="shigyou">士業版</button>
         <button class="tab-btn" data-tab="seizou">製造業版</button>
         <button class="tab-btn" data-tab="kaigai">海外進出版</button>
+        <button class="tab-btn" data-tab="nichijou">日常版</button>
       </div>
       <div class="sample-panels">
 
@@ -1394,6 +1424,41 @@
           </div>
         </div>
 
+        <!-- 日常版 -->
+        <div class="sample-panel" id="tab-nichijou">
+          <div class="sample-preview sample-preview--nichijou">
+            <div class="sample-header-row">
+              <div>
+                <div class="sample-masthead">生成新聞</div>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--gray); margin-top: 2px;">GENERATED NEWS — DAILY EDITION</div>
+              </div>
+              <div class="sample-meta">
+                朝刊 06:00 / 夕刊 17:00<br>
+                毎日自動配信
+              </div>
+            </div>
+            <div style="background: rgba(184,146,74,0.08); border: 1px solid var(--gold-light); padding: 12px 16px; margin-bottom: 20px; font-size: 0.8rem; color: var(--ink);">
+              <strong style="color: var(--red);">実際に稼働中のサービスです</strong>
+            </div>
+            <p class="sample-lead-headline">あなたの街から、生まれる新聞——地域×関心にカスタマイズされた毎日の紙面</p>
+            <p class="sample-lead-text">ユーザーの関心キーワード・地域情報から、AIが毎朝・毎夕の2版を自動生成。天気と服装のアドバイス、ご近所ニュース、SNSトレンドまで、日常に寄り添う新聞体験を届けます。</p>
+            <div class="sample-columns-2">
+              <div class="sample-col">
+                <h4>▍掲載コーナー</h4>
+                <p>一面ニュース / 催事情報 / 天気と服装 / ご近所ニュース / SNSトレンド / GEN ART / 数字で読む</p>
+              </div>
+              <div class="sample-col">
+                <h4>▍配信頻度</h4>
+                <p>朝刊（毎朝6:00）＋夕刊（毎夕17:00）の1日2回。プッシュ通知にも対応。</p>
+              </div>
+            </div>
+            <div style="text-align: center; padding-top: 20px; border-top: 1px solid var(--border);">
+              <a href="https://seiseishinbun.com" target="_blank" rel="noopener" class="btn btn-primary btn-arrow" style="display: inline-flex;">実際のサービスを見る</a>
+            </div>
+            <p class="sample-label-bottom">— AI Generated & Human Supervised —</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1407,24 +1472,33 @@
       <h2 class="section-title">すでに動いています。</h2>
       <p class="section-subtitle" style="margin: 0 auto;">実際に稼働中のサービスをご覧ください。</p>
     </div>
-    <div class="reveal" style="max-width: 680px; margin: 0 auto;">
-      <div style="background: var(--white); border: 1px solid var(--border); box-shadow: 0 8px 40px rgba(28,24,20,0.12); padding: 40px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <span style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);">Client</span>
-            <div style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; font-weight: 700; margin-top: 4px;">想像以上有限公司</div>
-            <div style="font-size: 0.75rem; color: var(--gray); margin-top: 2px;">We TAIWAN</div>
-          </div>
-          <div style="text-align: right;">
-            <span style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);">Service</span>
-            <div style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; font-weight: 700; margin-top: 4px;">台灣生成新聞</div>
-          </div>
+    <div class="case-grid reveal">
+      <!-- 事例1: 台湾ビジネス -->
+      <div style="background: var(--white); border: 1px solid var(--border); box-shadow: 0 8px 40px rgba(28,24,20,0.12); padding: 36px; display: flex; flex-direction: column;">
+        <div style="border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 16px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);">Case 01 — 海外進出</span>
+          <div style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; font-weight: 700; margin-top: 8px;">台灣生成新聞</div>
+          <div style="font-size: 0.75rem; color: var(--gray); margin-top: 2px;">想像以上有限公司（We TAIWAN）</div>
         </div>
-        <p style="font-size: 0.88rem; color: var(--gray); line-height: 2; margin-bottom: 24px;">
-          台湾ビジネスへの進出支援を行う同社が、日本人向けに台湾ニュースを毎週配信。現地メディアの報道をAIが日本語で要約し、用語解説付きで届ける業界特化型ニュースレター。
+        <p style="font-size: 0.82rem; color: var(--gray); line-height: 2; margin-bottom: 24px; flex: 1;">
+          台湾進出支援企業が、日本人向けに台湾ニュースを毎週配信。現地メディアの報道をAIが日本語で要約し、用語解説付きで届ける業界特化型ニュースレター。
         </p>
         <div style="text-align: center;">
-          <a href="https://taiwan-generated-news.vercel.app/issues/2026-03-04" target="_blank" rel="noopener" class="btn btn-primary btn-arrow">サービスを見る</a>
+          <a href="https://taiwan-generated-news.vercel.app/issues/2026-03-04" target="_blank" rel="noopener" class="btn btn-primary btn-arrow" style="font-size: 0.82rem; padding: 12px 24px;">サービスを見る</a>
+        </div>
+      </div>
+      <!-- 事例2: 日常版 -->
+      <div style="background: var(--white); border: 1px solid var(--border); box-shadow: 0 8px 40px rgba(28,24,20,0.12); padding: 36px; display: flex; flex-direction: column;">
+        <div style="border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 16px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);">Case 02 — 日常</span>
+          <div style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; font-weight: 700; margin-top: 8px;">生成新聞</div>
+          <div style="font-size: 0.75rem; color: var(--gray); margin-top: 2px;">seiseishinbun.com</div>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--gray); line-height: 2; margin-bottom: 24px; flex: 1;">
+          ユーザーの関心キーワード・地域情報に合わせて、AIが毎朝・毎夕の2版を自動生成。天気、ご近所ニュース、SNSトレンドまで、日常に寄り添う新聞体験。
+        </p>
+        <div style="text-align: center;">
+          <a href="https://seiseishinbun.com" target="_blank" rel="noopener" class="btn btn-primary btn-arrow" style="font-size: 0.82rem; padding: 12px 24px;">サービスを見る</a>
         </div>
       </div>
     </div>
@@ -1508,9 +1582,13 @@
       </div>
 
     </div>
-    <p class="reveal" style="text-align:center; margin-top:32px; font-size:0.8rem; color:var(--gray-light);">
-      配信数・業種・内容によりお見積もりが変わる場合があります。まずはお気軽にご相談ください。
-    </p>
+    <div class="reveal" style="text-align:center; margin-top:32px; font-size:0.78rem; color:var(--gray-light); line-height: 2;">
+      <p>配信数・業種・内容によりお見積もりが変わる場合があります。まずはお気軽にご相談ください。</p>
+      <p style="margin-top: 12px; font-size: 0.72rem;">※ 配信リスト（メールアドレス一覧）はお客様にてご準備いただきます。<br>
+      ※ 記事の情報源はRSS・公開ニュースです。独自取材・インタビュー記事は含まれません。<br>
+      ※ 配信内容の最終確認・ファクトチェックの責任はお客様に帰属します。<br>
+      ※ 生成された記事の著作権はお客様に帰属します。</p>
+    </div>
   </div>
 </section>
 
@@ -1565,6 +1643,42 @@
         </div>
         <div class="faq-a">
           <p class="faq-a-inner">最低契約期間（3ヶ月）以降は、1ヶ月前にご連絡いただければいつでも解約可能です。長期継続の場合は割引オプションもご用意しています。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          記事のネタ（情報ソース）はどこから取得しますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">RSSフィード・公開ニュースサイト・政府統計データなど、一般に公開されている情報をAIが収集・要約します。独自取材やインタビュー記事の制作は含まれません。特定のメディアや情報源を指定したい場合は、初回ヒアリング時にご相談ください。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          画像は何枚まで使えますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">スタータープランは1配信あたり1枚まで、スタンダード以上は最大3枚までです。AI生成画像・お客様ご提供の写真のどちらも使用できます。ストックフォトの購入・撮影手配は別途費用となります。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          記事の著作権は誰に帰属しますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">生成された記事・デザインの著作権はお客様に帰属します。ただし、サービス紹介目的（サンプル掲載等）での二次利用を許諾いただく場合があります。詳細は契約時にご説明します。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          読者が配信停止を希望した場合の対応は？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">配信メールには自動で配信停止（unsubscribe）リンクが含まれます。読者が自身で配信停止できる仕組みを標準で提供しており、特定電子メール法に準拠した運用をサポートします。</p>
         </div>
       </div>
     </div>
@@ -1622,7 +1736,7 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <h4>業界紙つくーる</h4>
-        <p>AI生成×プロデザインで、業界紙・メルマガの制作・配信代行を行うサービスです。運営：Paul（永野広志）</p>
+        <p>AI生成×プロデザインで、業界紙・メルマガの制作・配信代行を行うサービスです。</p>
       </div>
       <div class="footer-links">
         <a href="#service">サービスとは</a>
@@ -1634,7 +1748,7 @@
       </div>
     </div>
     <div class="footer-copy">
-      <span>© 2026 業界紙つくーる / Paul</span>
+      <span>© 2026 業界紙つくーる</span>
       <span>Powered by AI — Crafted by Human</span>
     </div>
   </div>
