@@ -470,16 +470,25 @@ async function generateArticle(clientData, env, revisionInstructions) {
 - ニュース間は罫線（border-bottom）で区切る
 
 ### 4. データで見る${theme.label}
-- 数字を使った業界分析セクション
-- 3〜4項目のデータを表形式（table）で見やすく表示
-- 例:「前年比+12.3%」「市場規模: 4.5兆円」など具体的な数値
-- テーブルの罫線・背景色を使って視認性を高める
-- 出典（架空でもリアルな名称）を記載
+- web searchで取得した実データを使った業界分析セクション
+- 3〜4項目のデータを表示
+- 各指標は以下の構成:
+  - 指標名 + 数値 + 前年比(%)
+  - 横棒グラフ（インラインCSSのdivで実装、画像不使用）
+    <div style="background:#e8e8e8;border-radius:4px;height:12px;width:100%;margin:4px 0">
+      <div style="background:${theme.primary};border-radius:4px;height:12px;width:{パーセント}%"></div>
+    </div>
+  - バーの幅は最大値を100%として相対計算
+  - 前年比が正なら ↑ 緑、負なら ↓ 赤で表示
+- 出典元を（）内に必ず記載（web searchで取得した実際の出典）
+- 架空のデータは使用禁止
 
 ### 5. ${theme.label}カレンダー
-- 今月の重要イベント・締切・季節情報を3〜5項目
-- 日付 + イベント名 + 簡単な補足の形式
-- 背景色付きのリスト風レイアウト
+- 今月の重要イベント・締切・季節情報を3〜5項目（web searchで取得した実イベント）
+- 日付は丸バッジで表示:
+  <div style="background:${theme.primary};color:white;border-radius:50%;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0">15</div>
+- 各イベントは日付バッジ＋テキストを横並び（display:flex; align-items:center; gap:12px）
+- イベント間は余白(margin-bottom:12px)で区切る
 
 ### 6. 編集後記（100字以上）
 - 編集長の個人的な視点や今号のポイントを振り返る
@@ -502,7 +511,16 @@ async function generateArticle(clientData, env, revisionInstructions) {
 - データテーブル: border-collapse、交互背景色（白 / ${theme.light}）
 - 全体の背景: #f5f5f5（外枠）、#ffffff（コンテンツ部分）`;
 
-  const userPrompt = `以下の情報をもとに、本物の創刊号を生成してください。
+  const userPrompt = `記事を生成する前に、必ずweb searchを使って以下の情報を取得してください：
+1. 「${answers.industry}」の最新ニュース（直近1ヶ月）
+2. 「${answers.industry}」に関連する最新の統計・数字
+3. 「${answers.industry}」の今月の重要イベント・トピック
+
+取得した実際の情報・数字をもとに記事を生成してください。
+架空のデータは使用しないでください。
+数字には必ず出典元を（）内に記載してください。
+
+以下の情報をもとに、本物の創刊号を生成してください。
 
 業種: ${answers.industry}
 目的: ${answers.purpose}
@@ -515,9 +533,26 @@ async function generateArticle(clientData, env, revisionInstructions) {
 
 特に重要なポイント:
 - ${answers.industry}の読者が「これは役に立つ」と感じる具体的な情報を書いてください
-- 抽象的な記述を避け、数字・事例・トレンド名を積極的に盛り込んでください
+- web searchで取得した実データ・実際のニュースを必ず盛り込んでください
 - 「${answers.tone}」のトーンを厳密に守ってください
-- 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください${revisionInstructions ? `
+- 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください
+
+## データセクションの視覚表現ルール
+データセクションの各指標について以下を含めてください：
+- 数値（web searchで取得した実データ）
+- 前年比（%）
+- 横棒グラフ用バーの幅（0-100の整数、最大値の指標を100として相対計算）
+
+横棒グラフは以下のインラインCSSで実装（画像不使用）：
+<div style="background:#e8e8e8;border-radius:4px;height:12px;width:100%;margin:4px 0">
+  <div style="background:${theme.primary};border-radius:4px;height:12px;width:{バーの幅}%"></div>
+</div>
+バーの色は ${theme.primary} を使用。
+
+## カレンダーセクションの日付バッジ
+日付は以下の丸バッジで表示：
+<div style="background:${theme.primary};color:white;border-radius:50%;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0">日</div>
+各イベントは日付バッジ＋テキストを横並びで表示。${revisionInstructions ? `
 
 ## 【修正指示】以下のフィードバックを必ず反映してください:
 ${revisionInstructions}` : ''}`;
@@ -532,9 +567,10 @@ ${revisionInstructions}` : ''}`;
       },
       body: JSON.stringify({
         model: ARTICLE_MODEL,
-        max_tokens: 8000,
+        max_tokens: 4000,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       }),
     });
 
@@ -551,7 +587,10 @@ ${revisionInstructions}` : ''}`;
       console.log(`Claude (sonnet): in=${result.usage.input_tokens} out=${result.usage.output_tokens} ≈${cost.toFixed(1)}円`);
     }
 
-    const html = result.content?.find(b => b.type === 'text')?.text || '';
+    // web_search使用時はcontent配列に複数ブロック（web_search_tool_result, text等）が返る
+    // 最後のtextブロックが記事HTML
+    const textBlocks = (result.content || []).filter(b => b.type === 'text');
+    const html = textBlocks.length > 0 ? textBlocks[textBlocks.length - 1].text : '';
     return html;
 
   } catch (err) {
