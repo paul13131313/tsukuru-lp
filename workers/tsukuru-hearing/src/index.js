@@ -726,39 +726,44 @@ async function handleApprovePost(request, env, origin, ctx) {
     // フィードバックを反映した修正指示を組み立て
     const revisionInstructions = buildRevisionInstructions(feedback, freeText);
 
-    // バックグラウンドで記事再生成→サンプルメール送信
-    ctx.waitUntil((async () => {
-      try {
-        const articleHtml = await generateArticle(clientData, env, revisionInstructions);
-        clientData.articleHtml = articleHtml;
+    // 同期的に記事再生成→サンプルメール送信
+    // （Stripe webhookと違いブラウザからの呼び出しなので、完了まで待ってからレスポンス返却）
+    try {
+      const articleHtml = await generateArticle(clientData, env, revisionInstructions);
+      clientData.articleHtml = articleHtml;
 
-        const newToken = crypto.randomUUID();
-        clientData.approvalToken = newToken;
-        clientData.tokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-        clientData.status = 'pending_approval';
+      const newToken = crypto.randomUUID();
+      clientData.approvalToken = newToken;
+      clientData.tokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      clientData.status = 'pending_approval';
 
-        await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
-        // 古いトークンインデックスを削除、新しいトークンインデックスを作成
-        await env.CLIENTS.delete(`token:${token}`);
-        await env.CLIENTS.put(`token:${newToken}`, clientData.email, { expirationTtl: 7 * 24 * 60 * 60 });
+      await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
+      // 古いトークンインデックスを削除、新しいトークンインデックスを作成
+      await env.CLIENTS.delete(`token:${token}`);
+      await env.CLIENTS.put(`token:${newToken}`, clientData.email, { expirationTtl: 7 * 24 * 60 * 60 });
 
-        await sendRevisionSampleEmail(clientData, env);
-        await sendRevisionAutoNotification(clientData, revisionEntry, env);
-        console.log(`Revision #${revisionCount} article regenerated and sample sent for ${clientData.email}`);
-      } catch (err) {
-        console.error(`Revision article generation failed for ${clientData.email}: ${err.message}`);
-        clientData.status = 'revision_requested';
-        await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
-        // エラー時はPaulに手動対応を依頼
-        await sendRevisionNotification(clientData, feedback, freeText, env);
-      }
-    })());
+      await sendRevisionSampleEmail(clientData, env);
+      await sendRevisionAutoNotification(clientData, revisionEntry, env);
+      console.log(`Revision #${revisionCount} article regenerated and sample sent for ${clientData.email}`);
 
-    return json({
-      ok: true,
-      revisionCount,
-      message: `修正依頼を受け付けました（${revisionCount}/${MAX_REVISIONS}回目）。\nまもなく修正版のサンプルをメールでお送りします。`,
-    }, 200, origin);
+      return json({
+        ok: true,
+        revisionCount,
+        message: `修正版を作成しました（${revisionCount}/${MAX_REVISIONS}回目）。\n修正版のサンプルメールをお送りしました。`,
+      }, 200, origin);
+    } catch (err) {
+      console.error(`Revision article generation failed for ${clientData.email}: ${err.message}`);
+      clientData.status = 'revision_requested';
+      await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
+      // エラー時はPaulに手動対応を依頼
+      await sendRevisionNotification(clientData, feedback, freeText, env);
+
+      return json({
+        ok: true,
+        revisionCount,
+        message: `修正依頼を受け付けました（${revisionCount}/${MAX_REVISIONS}回目）。\n自動生成に失敗したため、担当者が手動で対応します。`,
+      }, 200, origin);
+    }
   }
 
   return json({ error: 'Invalid action' }, 400, origin);

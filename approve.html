@@ -491,7 +491,7 @@
     }
 
     setButtonsDisabled(true);
-    document.getElementById('btnRevise').textContent = '送信中…';
+    document.getElementById('btnRevise').textContent = '修正版を生成中…（30秒ほどお待ちください）';
 
     fetch(WORKER_URL + '/approve', {
       method: 'POST',
@@ -516,12 +516,12 @@
             '<span style="font-size:0.85rem;color:var(--gray);">今しばらくお待ちください。</span>'
           );
         } else {
-          // 自動再生成フロー
+          // 自動再生成完了
           showResult('info',
             '<span class="result-icon">📝</span>' +
-            '<strong>修正依頼を受け付けました（' + data.revisionCount + '/3回目）</strong><br>' +
-            'まもなく修正版のサンプルをメールでお送りします。<br>' +
-            '<span style="font-size:0.85rem;color:var(--gray);">新しいメールが届きましたら、再度内容をご確認ください。</span>'
+            '<strong>修正版を作成しました（' + data.revisionCount + '/3回目）</strong><br>' +
+            '修正版のサンプルメールをお送りしました。<br>' +
+            '<span style="font-size:0.85rem;color:var(--gray);">メールのリンクから再度内容をご確認ください。</span>'
           );
         }
       } else {
