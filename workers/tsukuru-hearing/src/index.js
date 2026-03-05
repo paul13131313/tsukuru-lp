@@ -417,16 +417,34 @@ async function verifyStripeSignature(payload, sigHeader, secret) {
 // ===== 業種別カラーテーマ =====
 function getIndustryTheme(industry) {
   const themes = {
-    '不動産業': { primary: '#1a3a5c', accent: '#4a90d9', light: '#e8f0fe', emoji: '🏢', label: '不動産', gradFrom: '#1a2f4a', gradTo: '#0d1f33' },
-    '税理士・会計士': { primary: '#2d5016', accent: '#5a9e2f', light: '#edf7e5', emoji: '📊', label: '税務・会計', gradFrom: '#2d5016', gradTo: '#1a3009' },
-    '社労士・弁護士': { primary: '#4a1942', accent: '#8b3a7d', light: '#f5e8f3', emoji: '⚖️', label: '法務・労務', gradFrom: '#4a1942', gradTo: '#2d0a27' },
-    '製造業・商社': { primary: '#5c3d1a', accent: '#d4922a', light: '#fef5e8', emoji: '🏭', label: '製造・商社', gradFrom: '#1a1a2e', gradTo: '#0f0f1a' },
-    '地域団体・商工会': { primary: '#1a4a3d', accent: '#2e9e7d', light: '#e5f7f2', emoji: '🤝', label: '地域・団体', gradFrom: '#1a4a3d', gradTo: '#0d2820' },
-    '飲食業': { primary: '#8b2500', accent: '#e8593a', light: '#fde8e3', emoji: '🍽️', label: '飲食', gradFrom: '#8B2500', gradTo: '#5c1900' },
-    '医療・介護': { primary: '#1a5c5c', accent: '#2aa5a5', light: '#e5f5f5', emoji: '🏥', label: '医療・介護', gradFrom: '#0a3d62', gradTo: '#051e31' },
-    'IT・テクノロジー': { primary: '#1a1a4a', accent: '#5a5ad9', light: '#ebebfe', emoji: '💻', label: 'IT', gradFrom: '#0d2137', gradTo: '#071320' },
+    '不動産業': { primary: '#1a3a5c', accent: '#4a90d9', light: '#e8f0fe', emoji: '🏢', label: '不動産', heroBg: '#0a0a0a', heroAccent: '#c8a96e' },
+    '税理士・会計士': { primary: '#2d5016', accent: '#5a9e2f', light: '#edf7e5', emoji: '📊', label: '税務・会計', heroBg: '#0a0a0a', heroAccent: '#5a9e2f' },
+    '社労士・弁護士': { primary: '#4a1942', accent: '#8b3a7d', light: '#f5e8f3', emoji: '⚖️', label: '法務・労務', heroBg: '#0a0a0a', heroAccent: '#8b3a7d' },
+    '製造業・商社': { primary: '#5c3d1a', accent: '#d4922a', light: '#fef5e8', emoji: '🏭', label: '製造・商社', heroBg: '#0a0a0a', heroAccent: '#d4922a' },
+    '地域団体・商工会': { primary: '#1a4a3d', accent: '#2e9e7d', light: '#e5f7f2', emoji: '🤝', label: '地域・団体', heroBg: '#0a0a0a', heroAccent: '#2e9e7d' },
+    '飲食業': { primary: '#8b2500', accent: '#e8593a', light: '#fde8e3', emoji: '🍽️', label: '飲食', heroBg: '#1a0500', heroAccent: '#e8825a' },
+    '医療・介護': { primary: '#1a5c5c', accent: '#2aa5a5', light: '#e5f5f5', emoji: '🏥', label: '医療・介護', heroBg: '#00101a', heroAccent: '#4ab3d4' },
+    'IT・テクノロジー': { primary: '#1a1a4a', accent: '#5a5ad9', light: '#ebebfe', emoji: '💻', label: 'IT', heroBg: '#050510', heroAccent: '#7b8fff' },
   };
-  return themes[industry] || { primary: '#1c1814', accent: '#b8924a', light: '#f4ede0', emoji: '📰', label: '業界', gradFrom: '#1a1a1a', gradTo: '#0d0d0d' };
+  return themes[industry] || { primary: '#1c1814', accent: '#b8924a', light: '#f4ede0', emoji: '📰', label: '業界', heroBg: '#0a0a0a', heroAccent: '#c8a96e' };
+}
+
+// HEXカラーをRGBに変換（プロンプト内のrgba()用）
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `${r},${g},${b}`;
+}
+
+// HEXカラーを明るくする（グラデーション用）
+function lightenColor(hex) {
+  const h = hex.replace('#', '');
+  const r = Math.min(255, parseInt(h.substring(0, 2), 16) + 40);
+  const g = Math.min(255, parseInt(h.substring(2, 4), 16) + 40);
+  const b = Math.min(255, parseInt(h.substring(4, 6), 16) + 40);
+  return '#' + [r, g, b].map(function(c) { return c.toString(16).padStart(2, '0'); }).join('');
 }
 
 // ===== 記事自動生成 =====
@@ -449,20 +467,46 @@ async function generateArticle(clientData, env, revisionInstructions) {
 
 ## 記事構成（必ずこの順番で、すべて含めること）
 
-### 1. ヘッダー（インパクト重視・新聞の権威感を演出）
-以下の順番で構成：
-1. 上部アクセントライン: <div style="height:6px;background:${theme.accent}"></div>
-2. メインヘッダー（背景グラデーション + パディング40px）:
-  <div style="background:linear-gradient(135deg, ${theme.gradFrom}, ${theme.gradTo});padding:40px 24px;text-align:center">
-    <div style="font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:2px;margin-bottom:12px">発行元名（例: ○○協会 公式メールマガジン）</div>
-    <h1 style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-size:42px;font-weight:900;color:#ffffff;margin:0 0 12px 0;letter-spacing:-1px;line-height:1.2">${titleText}</h1>
-    <div style="font-size:16px;color:${theme.accent};font-style:italic;margin-bottom:16px">←ここにキャッチコピーを自動生成（例:「2026年春、不動産市場に異変あり」）</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.5)">第${issueNumber}号 ｜ ${today}</div>
-    <div style="width:60px;height:1px;background:rgba(255,255,255,0.3);margin:16px auto 0"></div>
+### 1. ヘッダー（Option C: フルブリード・エディトリアル見出し）
+以下のHTML構造を厳密に再現すること：
+
+<div style="position:relative;overflow:hidden;background:${theme.heroBg};min-height:300px">
+  <!-- アクセントライン -->
+  <div style="height:5px;background:linear-gradient(90deg,${theme.heroAccent},${lightenColor(theme.heroAccent)},${theme.heroAccent})"></div>
+  <!-- グリッド線（背景装飾） -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(${hexToRgb(theme.heroAccent)},0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(${hexToRgb(theme.heroAccent)},0.05) 1px,transparent 1px);background-size:60px 60px"></div>
+  <!-- メインコンテンツ -->
+  <div style="position:relative;padding:48px 48px 40px">
+    <!-- 右上: 紙面名・号数 -->
+    <div style="position:absolute;top:48px;right:48px;text-align:right">
+      <div style="font-size:13px;color:rgba(255,255,255,0.3);font-family:sans-serif;letter-spacing:0.1em;margin-bottom:4px">${titleText}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2);font-family:sans-serif">第${issueNumber}号 / ${today}</div>
+    </div>
+    <!-- 左側: 業種タグ -->
+    <div style="display:inline-block;background:${theme.heroAccent};color:${theme.heroBg};font-size:9px;font-weight:900;letter-spacing:0.3em;padding:4px 10px;font-family:sans-serif;text-transform:uppercase;margin-bottom:20px">特集</div>
+    <!-- メイン見出しコピー（Claudeが自動生成、最重要キーワードを<em>で囲む） -->
+    <div style="font-size:34px;font-weight:900;color:white;line-height:1.2;letter-spacing:-1px;margin-bottom:16px;max-width:480px">
+      ←ここにメイン見出しコピーを生成。重要な数字やキーワードは<em style="color:${theme.heroAccent};font-style:normal">で囲む
+    </div>
+    <!-- リード文 -->
+    <div style="font-size:13px;color:rgba(255,255,255,0.5);font-family:sans-serif;line-height:1.6;max-width:400px;margin-bottom:32px">
+      ←見出しを補足する2〜3文のリード文を生成
+    </div>
+    <!-- 統計3点横並び -->
+    <div style="display:flex;gap:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1)">
+      <div style="display:flex;flex-direction:column">
+        <span style="font-size:24px;font-weight:900;color:white;letter-spacing:-0.5px">数値</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.4);font-family:sans-serif;letter-spacing:0.1em;margin-top:2px">ラベル</span>
+      </div>
+      <!-- ×3セット -->
+    </div>
   </div>
-- キャッチコピーはその号の特集テーマから煽り系の一言を自動生成する（例: 「止まらない地価上昇、勝ち組はどこだ」「値上がり止まらぬ外食業界の今」）
-- タイトルはfont-size:42px, font-weight:900, letter-spacing:-1pxで大きく表示
-- 発行日・号数は控えめに（font-size:13px、半透明白文字）
+</div>
+
+ヘッダーで必ず生成する要素：
+1. メイン見出しコピー: その号の最重要トピックを新聞の一面見出しのように1〜2行で。最も重要な数字やキーワードを<em style="color:${theme.heroAccent};font-style:normal">で囲む（例: バブル超え。<em style="color:${theme.heroAccent};font-style:normal">7,122万円</em>が示す転換点。）
+2. リード文: 見出しを補足する2〜3文
+3. 統計3点: 記事中の最重要数字3つ（数値・単位・ラベル）を抽出して配置
 
 ### 2. 特集記事（500字以上）
 - ${theme.emoji} 見出しにアイコン絵文字を付ける
@@ -518,7 +562,7 @@ async function generateArticle(clientData, env, revisionInstructions) {
 ## デザイン指針
 - max-width: 600px; margin: 0 auto
 - モバイル対応: フォントサイズ最低14px、パディング十分に
-- ヘッダー: 背景 linear-gradient(135deg, ${theme.gradFrom}, ${theme.gradTo})、テキスト白、パディング40px、タイトルfont-size:42px font-weight:900
+- ヘッダー: 背景 ${theme.heroBg}、グリッド線装飾、アクセントライン${theme.heroAccent}、見出し34px font-weight:900、統計3点横並び
 - セクション区切り: 左ボーダー4px ${theme.accent} + パディング
 - 見出し: font-size 20px、色 ${theme.primary}、font-weight bold
 - 本文: font-size 15px、line-height 1.8、色 #333333
@@ -550,7 +594,16 @@ async function generateArticle(clientData, env, revisionInstructions) {
 - ${answers.industry}の読者が「これは役に立つ」と感じる具体的な情報を書いてください
 - web searchで取得した実データ・実際のニュースを必ず盛り込んでください
 - 「${answers.tone}」のトーンを厳密に守ってください
-- 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください
+- 全セクション（ヘッダー・特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください
+
+## ヘッダーの生成ルール（最重要）
+ヘッダーはOption C（フルブリード・エディトリアル見出し）形式で必ず以下を生成：
+1. メイン見出しコピー: その号の最重要トピックを新聞の一面見出しのように1〜2行で生成。
+   最も重要な数字やキーワードを<em style="color:${theme.heroAccent};font-style:normal">で囲む。
+   例: 「バブル超え。<em style="color:${theme.heroAccent};font-style:normal">7,122万円</em>が示す転換点。」
+2. リード文: 見出しを補足する2〜3文（13px、半透明白文字）
+3. 統計3点: 記事中の最重要数字3つを抽出し、数値（24px白太字）+ ラベル（10px薄白）の形式で横並び配置
+カラー: 背景=${theme.heroBg}、アクセント=${theme.heroAccent}
 
 ## データセクションの視覚表現ルール
 データセクションは4項目の指標カードを2列グリッドで表示してください。
