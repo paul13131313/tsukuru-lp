@@ -417,16 +417,16 @@ async function verifyStripeSignature(payload, sigHeader, secret) {
 // ===== 業種別カラーテーマ =====
 function getIndustryTheme(industry) {
   const themes = {
-    '不動産業': { primary: '#1a3a5c', accent: '#4a90d9', light: '#e8f0fe', emoji: '🏢', label: '不動産' },
-    '税理士・会計士': { primary: '#2d5016', accent: '#5a9e2f', light: '#edf7e5', emoji: '📊', label: '税務・会計' },
-    '社労士・弁護士': { primary: '#4a1942', accent: '#8b3a7d', light: '#f5e8f3', emoji: '⚖️', label: '法務・労務' },
-    '製造業・商社': { primary: '#5c3d1a', accent: '#d4922a', light: '#fef5e8', emoji: '🏭', label: '製造・商社' },
-    '地域団体・商工会': { primary: '#1a4a3d', accent: '#2e9e7d', light: '#e5f7f2', emoji: '🤝', label: '地域・団体' },
-    '飲食業': { primary: '#8b2500', accent: '#e8593a', light: '#fde8e3', emoji: '🍽️', label: '飲食' },
-    '医療・介護': { primary: '#1a5c5c', accent: '#2aa5a5', light: '#e5f5f5', emoji: '🏥', label: '医療・介護' },
-    'IT・テクノロジー': { primary: '#1a1a4a', accent: '#5a5ad9', light: '#ebebfe', emoji: '💻', label: 'IT' },
+    '不動産業': { primary: '#1a3a5c', accent: '#4a90d9', light: '#e8f0fe', emoji: '🏢', label: '不動産', gradFrom: '#1a2f4a', gradTo: '#0d1f33' },
+    '税理士・会計士': { primary: '#2d5016', accent: '#5a9e2f', light: '#edf7e5', emoji: '📊', label: '税務・会計', gradFrom: '#2d5016', gradTo: '#1a3009' },
+    '社労士・弁護士': { primary: '#4a1942', accent: '#8b3a7d', light: '#f5e8f3', emoji: '⚖️', label: '法務・労務', gradFrom: '#4a1942', gradTo: '#2d0a27' },
+    '製造業・商社': { primary: '#5c3d1a', accent: '#d4922a', light: '#fef5e8', emoji: '🏭', label: '製造・商社', gradFrom: '#1a1a2e', gradTo: '#0f0f1a' },
+    '地域団体・商工会': { primary: '#1a4a3d', accent: '#2e9e7d', light: '#e5f7f2', emoji: '🤝', label: '地域・団体', gradFrom: '#1a4a3d', gradTo: '#0d2820' },
+    '飲食業': { primary: '#8b2500', accent: '#e8593a', light: '#fde8e3', emoji: '🍽️', label: '飲食', gradFrom: '#8B2500', gradTo: '#5c1900' },
+    '医療・介護': { primary: '#1a5c5c', accent: '#2aa5a5', light: '#e5f5f5', emoji: '🏥', label: '医療・介護', gradFrom: '#0a3d62', gradTo: '#051e31' },
+    'IT・テクノロジー': { primary: '#1a1a4a', accent: '#5a5ad9', light: '#ebebfe', emoji: '💻', label: 'IT', gradFrom: '#0d2137', gradTo: '#071320' },
   };
-  return themes[industry] || { primary: '#1c1814', accent: '#b8924a', light: '#f4ede0', emoji: '📰', label: '業界' };
+  return themes[industry] || { primary: '#1c1814', accent: '#b8924a', light: '#f4ede0', emoji: '📰', label: '業界', gradFrom: '#1a1a1a', gradTo: '#0d0d0d' };
 }
 
 // ===== 記事自動生成 =====
@@ -449,17 +449,29 @@ async function generateArticle(clientData, env, revisionInstructions) {
 
 ## 記事構成（必ずこの順番で、すべて含めること）
 
-### 1. ヘッダー
-- 紙面名「${titleText}」を大きく表示
-- 号数: 第${issueNumber}号
-- 発行日: ${today}
-- キャッチコピー: 業種に合わせた1行コピー（例:「${theme.label}の"いま"を、毎号お届けします」）
-- 背景色: ${theme.primary}（業種テーマカラー）、文字色: #ffffff
+### 1. ヘッダー（インパクト重視・新聞の権威感を演出）
+以下の順番で構成：
+1. 上部アクセントライン: <div style="height:6px;background:${theme.accent}"></div>
+2. メインヘッダー（背景グラデーション + パディング40px）:
+  <div style="background:linear-gradient(135deg, ${theme.gradFrom}, ${theme.gradTo});padding:40px 24px;text-align:center">
+    <div style="font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:2px;margin-bottom:12px">発行元名（例: ○○協会 公式メールマガジン）</div>
+    <h1 style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-size:42px;font-weight:900;color:#ffffff;margin:0 0 12px 0;letter-spacing:-1px;line-height:1.2">${titleText}</h1>
+    <div style="font-size:16px;color:${theme.accent};font-style:italic;margin-bottom:16px">←ここにキャッチコピーを自動生成（例:「2026年春、不動産市場に異変あり」）</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.5)">第${issueNumber}号 ｜ ${today}</div>
+    <div style="width:60px;height:1px;background:rgba(255,255,255,0.3);margin:16px auto 0"></div>
+  </div>
+- キャッチコピーはその号の特集テーマから煽り系の一言を自動生成する（例: 「止まらない地価上昇、勝ち組はどこだ」「値上がり止まらぬ外食業界の今」）
+- タイトルはfont-size:42px, font-weight:900, letter-spacing:-1pxで大きく表示
+- 発行日・号数は控えめに（font-size:13px、半透明白文字）
 
 ### 2. 特集記事（500字以上）
 - ${theme.emoji} 見出しにアイコン絵文字を付ける
 - 業界の重要トピック・最新トレンドを深掘り
 - 具体的な数字・事例・企業名（架空でもリアルに）を含める
+- **リード文ボックス**: 本文の前に3行程度のリード文を以下の形式で配置:
+  <div style="background:${theme.light};border-left:4px solid ${theme.accent};padding:12px 16px;margin-bottom:16px;font-size:15px;line-height:1.6;color:#555">
+    この記事の要約・ポイントを3行で（新聞のデッキに相当）
+  </div>
 - 背景色 ${theme.light} のハイライトボックスで囲む
 - 見出しは ${theme.accent} カラー
 
@@ -471,16 +483,19 @@ async function generateArticle(clientData, env, revisionInstructions) {
 
 ### 4. データで見る${theme.label}
 - web searchで取得した実データを使った業界分析セクション
-- 3〜4項目のデータを表示
-- 各指標は以下の構成:
-  - 指標名 + 数値 + 前年比(%)
-  - 横棒グラフ（インラインCSSのdivで実装、画像不使用）
-    <div style="background:#e8e8e8;border-radius:4px;height:12px;width:100%;margin:4px 0">
-      <div style="background:${theme.primary};border-radius:4px;height:12px;width:{パーセント}%"></div>
-    </div>
-  - バーの幅は最大値を100%として相対計算
-  - 前年比が正なら ↑ 緑、負なら ↓ 赤で表示
-- 出典元を（）内に必ず記載（web searchで取得した実際の出典）
+- 4項目の指標カードを2列グリッドで配置
+- グリッドコンテナ:
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+- 各カードのHTML構造:
+  <div style="background:${theme.light};border-radius:8px;padding:16px;border:1px solid #e0e0e0">
+    <div style="font-size:13px;color:#666;margin-bottom:4px">指標名</div>
+    <div style="font-size:24px;font-weight:bold;color:${theme.primary};margin-bottom:4px">数値</div>
+    <div style="font-size:14px;color:#27ae60;margin-bottom:8px">↑ +22.0%　前年比</div>
+    <div style="font-size:11px;color:#999">（出典：○○省）</div>
+  </div>
+- 前年比の色分け: 上昇→color:#27ae60（緑）、下降→color:#e74c3c（赤）
+- 上昇は「↑」、下降は「↓」の矢印を付ける
+- 出典元はweb searchで取得した実際の出典を記載
 - 架空のデータは使用禁止
 
 ### 5. ${theme.label}カレンダー
@@ -503,12 +518,12 @@ async function generateArticle(clientData, env, revisionInstructions) {
 ## デザイン指針
 - max-width: 600px; margin: 0 auto
 - モバイル対応: フォントサイズ最低14px、パディング十分に
-- ヘッダー: 背景 ${theme.primary}、テキスト白、パディング上下24px
+- ヘッダー: 背景 linear-gradient(135deg, ${theme.gradFrom}, ${theme.gradTo})、テキスト白、パディング40px、タイトルfont-size:42px font-weight:900
 - セクション区切り: 左ボーダー4px ${theme.accent} + パディング
 - 見出し: font-size 20px、色 ${theme.primary}、font-weight bold
 - 本文: font-size 15px、line-height 1.8、色 #333333
 - フォントファミリ: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif（本文）/ 'Hiragino Mincho ProN', 'Yu Mincho', serif（タイトル・見出し）
-- データテーブル: border-collapse、交互背景色（白 / ${theme.light}）
+- データカード: 2列グリッド、背景 ${theme.light}、角丸8px、ボーダー1px #e0e0e0
 - 全体の背景: #f5f5f5（外枠）、#ffffff（コンテンツ部分）`;
 
   const userPrompt = `記事を生成する前に、必ずweb searchを使って以下の情報を取得してください：
@@ -538,16 +553,21 @@ async function generateArticle(clientData, env, revisionInstructions) {
 - 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください
 
 ## データセクションの視覚表現ルール
-データセクションの各指標について以下を含めてください：
-- 数値（web searchで取得した実データ）
-- 前年比（%）
-- 横棒グラフ用バーの幅（0-100の整数、最大値の指標を100として相対計算）
+データセクションは4項目の指標カードを2列グリッドで表示してください。
+横棒グラフは使用しません。代わりに以下のカード形式を使ってください：
 
-横棒グラフは以下のインラインCSSで実装（画像不使用）：
-<div style="background:#e8e8e8;border-radius:4px;height:12px;width:100%;margin:4px 0">
-  <div style="background:${theme.primary};border-radius:4px;height:12px;width:{バーの幅}%"></div>
+グリッドコンテナ:
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+
+各カード:
+<div style="background:${theme.light};border-radius:8px;padding:16px;border:1px solid #e0e0e0">
+  <div style="font-size:13px;color:#666;margin-bottom:4px">指標名</div>
+  <div style="font-size:24px;font-weight:bold;color:${theme.primary};margin-bottom:4px">数値</div>
+  <div style="font-size:14px;color:#27ae60;margin-bottom:8px">↑ +22.0%　前年比</div>
+  <div style="font-size:11px;color:#999">（出典：○○省）</div>
 </div>
-バーの色は ${theme.primary} を使用。
+
+前年比の色: 上昇→color:#27ae60（緑）+ ↑、下降→color:#e74c3c（赤）+ ↓
 
 ## カレンダーセクションの日付バッジ
 日付は以下の丸バッジで表示：
