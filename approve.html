@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サンプル確認 — 業界紙つくーる</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1814;
+    --paper: #f4ede0;
+    --gold: #b8924a;
+    --gold-light: #d4b07a;
+    --red: #8b1a1a;
+    --gray: #6b6058;
+    --gray-light: #9b9088;
+    --white: #fdfaf5;
+    --border: rgba(28,24,20,0.15);
+    --green: #2e7d32;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .logo-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    display: block;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    max-width: 720px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(28,24,20,0.08);
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 560px) {
+    .card { padding: 2rem 1.25rem; }
+  }
+
+  .card-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+  .card-subtitle {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  /* プレビュー */
+  .preview-frame {
+    width: 100%;
+    min-height: 600px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  /* ローディング */
+  .loading {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+  }
+  .loading-spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* エラー */
+  .error-msg {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--red);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  /* フィードバック */
+  .feedback-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .feedback-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .feedback-desc {
+    font-size: 0.88rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .checkbox-label:hover {
+    background: rgba(184,146,74,0.05);
+    border-color: var(--gold-light);
+  }
+  .checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .free-text-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+  .free-text {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+    margin-bottom: 1.5rem;
+  }
+  .free-text:focus { outline: none; border-color: var(--gold); }
+
+  /* ボタン */
+  .btn-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+  @media (max-width: 480px) {
+    .btn-row { flex-direction: column; }
+  }
+  .btn-approve {
+    flex: 1;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-approve:hover { opacity: 0.85; }
+  .btn-approve:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-revise {
+    flex: 1;
+    background: var(--white);
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-revise:hover { border-color: var(--ink); }
+  .btn-revise:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* 結果メッセージ */
+  .result-msg {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .result-msg.success {
+    background: #e8f5e9;
+    color: var(--green);
+    display: block;
+  }
+  .result-msg.info {
+    background: #e3f2fd;
+    color: #1565c0;
+    display: block;
+  }
+  .result-msg.error {
+    background: #fbe9e7;
+    color: var(--red);
+    display: block;
+  }
+  .result-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .footer a {
+    color: var(--gray);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .footer a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<a href="./" class="logo">
+  業界紙つくーる
+  <span class="logo-en">INDUSTRY PAPER MAKER</span>
+</a>
+
+<!-- メインカード -->
+<div class="card">
+  <!-- ローディング状態 -->
+  <div id="loadingState" class="loading">
+    <div class="loading-spinner"></div>
+    <p>サンプルを読み込んでいます…</p>
+  </div>
+
+  <!-- エラー状態 -->
+  <div id="errorState" class="error-msg" style="display:none;"></div>
+
+  <!-- コンテンツ（読み込み完了後に表示） -->
+  <div id="contentState" style="display:none;">
+    <h1 class="card-title" id="articleTitle">記事サンプルをご確認ください</h1>
+    <p class="card-subtitle">内容をご確認いただき、「このまま配信する」か「修正を依頼する」をお選びください。</p>
+
+    <!-- 記事プレビュー -->
+    <iframe id="previewFrame" class="preview-frame" sandbox="allow-same-origin" frameborder="0"></iframe>
+
+    <!-- フィードバックセクション -->
+    <div class="feedback-section">
+      <h2 class="feedback-title">いかがでしょうか？</h2>
+      <p class="feedback-desc">気になる点があればチェックしてください（複数選択可）</p>
+
+      <div class="checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" value="文体・トーンを変えたい">
+          文体・トーンを変えたい
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="記事のテーマが業種に合っていない">
+          記事のテーマが業種に合っていない
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="もっとやわらかい表現にしたい">
+          もっとやわらかい表現にしたい
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="もっと専門的な内容にしたい">
+          もっと専門的な内容にしたい
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="タイトル・見出しを変えたい">
+          タイトル・見出しを変えたい
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="レイアウト・デザインを変えたい">
+          レイアウト・デザインを変えたい
+        </label>
+      </div>
+
+      <label class="free-text-label" for="freeText">その他、ご要望があればご記入ください</label>
+      <textarea id="freeText" class="free-text" placeholder="例：記事のボリュームを増やしてほしい、特定のトピックを取り上げてほしい など"></textarea>
+
+      <div class="btn-row">
+        <button class="btn-approve" id="btnApprove" onclick="handleApprove()">このまま配信する →</button>
+        <button class="btn-revise" id="btnRevise" onclick="handleRevise()">修正を依頼する</button>
+      </div>
+
+      <div id="resultMsg" class="result-msg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="./">← トップページに戻る</a>
+</div>
+
+<script>
+  var WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
+  var token = new URLSearchParams(window.location.search).get('token');
+  var articleData = null;
+
+  // ページ読み込み時: 記事データを取得
+  (function() {
+    if (!token) {
+      showError('トークンが指定されていません。メールのリンクから再度アクセスしてください。');
+      return;
+    }
+
+    fetch(WORKER_URL + '/approve?token=' + encodeURIComponent(token))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.error) {
+          showError(data.error);
+          return;
+        }
+
+        articleData = data;
+
+        // タイトル更新
+        var title = data.title || '業界通信';
+        document.getElementById('articleTitle').textContent =
+          '「' + title + '」第' + data.issueNumber + '号のサンプル';
+
+        // iframeに記事HTMLを表示
+        var iframe = document.getElementById('previewFrame');
+        iframe.srcdoc = data.articleHtml;
+
+        // iframe高さの自動調整
+        iframe.onload = function() {
+          try {
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            var height = iframeDoc.body.scrollHeight;
+            iframe.style.height = Math.max(height + 40, 400) + 'px';
+            iframe.style.minHeight = 'auto';
+          } catch(e) {
+            // クロスオリジンの場合はデフォルト高さを維持
+          }
+        };
+
+        // ローディング非表示、コンテンツ表示
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('contentState').style.display = 'block';
+      })
+      .catch(function(err) {
+        showError('データの読み込みに失敗しました。ページを再読み込みしてください。');
+        console.error(err);
+      });
+  })();
+
+  function showError(msg) {
+    document.getElementById('loadingState').style.display = 'none';
+    var el = document.getElementById('errorState');
+    el.innerHTML = '<p>' + msg + '</p><p style="margin-top:1rem;"><a href="./" style="color:var(--gold);">トップページに戻る</a></p>';
+    el.style.display = 'block';
+  }
+
+  function getSelectedFeedback() {
+    var checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked');
+    var result = [];
+    checkboxes.forEach(function(cb) { result.push(cb.value); });
+    return result;
+  }
+
+  function setButtonsDisabled(disabled) {
+    document.getElementById('btnApprove').disabled = disabled;
+    document.getElementById('btnRevise').disabled = disabled;
+  }
+
+  function showResult(type, html) {
+    var el = document.getElementById('resultMsg');
+    el.className = 'result-msg ' + type;
+    el.innerHTML = html;
+  }
+
+  // 「このまま配信する」
+  function handleApprove() {
+    if (!confirm('読者リスト全員にこの内容で配信します。よろしいですか？')) return;
+
+    setButtonsDisabled(true);
+    document.getElementById('btnApprove').textContent = '配信処理中…';
+
+    fetch(WORKER_URL + '/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: token,
+        action: 'approve',
+        feedback: getSelectedFeedback(),
+        freeText: document.getElementById('freeText').value.trim(),
+      }),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        document.querySelector('.feedback-section').style.display = 'none';
+        showResult('success',
+          '<span class="result-icon">🎉</span>' +
+          '<strong>配信が完了しました！</strong><br>' +
+          '読者リストへの配信を開始しました。'
+        );
+      } else {
+        showResult('error', data.error || 'エラーが発生しました。');
+        setButtonsDisabled(false);
+        document.getElementById('btnApprove').textContent = 'このまま配信する →';
+      }
+    })
+    .catch(function(err) {
+      showResult('error', '通信エラーが発生しました。もう一度お試しください。');
+      setButtonsDisabled(false);
+      document.getElementById('btnApprove').textContent = 'このまま配信する →';
+    });
+  }
+
+  // 「修正を依頼する」
+  function handleRevise() {
+    var feedback = getSelectedFeedback();
+    var freeText = document.getElementById('freeText').value.trim();
+
+    if (feedback.length === 0 && !freeText) {
+      alert('修正箇所をチェックするか、自由記入欄にご要望をご記入ください。');
+      return;
+    }
+
+    setButtonsDisabled(true);
+    document.getElementById('btnRevise').textContent = '送信中…';
+
+    fetch(WORKER_URL + '/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: token,
+        action: 'revise',
+        feedback: feedback,
+        freeText: freeText,
+      }),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        document.querySelector('.feedback-section').style.display = 'none';
+        showResult('info',
+          '<span class="result-icon">📝</span>' +
+          '<strong>ご要望を受け付けました</strong><br>' +
+          '2営業日以内に修正版をお送りします。'
+        );
+      } else {
+        showResult('error', data.error || 'エラーが発生しました。');
+        setButtonsDisabled(false);
+        document.getElementById('btnRevise').textContent = '修正を依頼する';
+      }
+    })
+    .catch(function(err) {
+      showResult('error', '通信エラーが発生しました。もう一度お試しください。');
+      setButtonsDisabled(false);
+      document.getElementById('btnRevise').textContent = '修正を依頼する';
+    });
+  }
+</script>
+</body>
+</html>

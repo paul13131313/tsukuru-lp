@@ -4,3 +4,8 @@ compatibility_date = "2024-12-01"
 
 [observability]
 enabled = true
+
+[[kv_namespaces]]
+binding = "CLIENTS"
+id = "dd0a19fe7dea4389b95060d258027cba"
+preview_id = "80faf48621e649d1b875d4fbb925b41e"
