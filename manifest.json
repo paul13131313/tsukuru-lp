@@ -1,0 +1,21 @@
+{
+  "name": "業界紙つくーる",
+  "short_name": "つくーる",
+  "description": "AI生成×プロデザインの業界紙・メルマガ制作配信代行",
+  "start_url": "/tsukuru-lp/",
+  "display": "standalone",
+  "background_color": "#f4ede0",
+  "theme_color": "#1c1814",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
