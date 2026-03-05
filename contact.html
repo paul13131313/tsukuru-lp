@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解約・お問い合わせ — 業界紙つくーる</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1814;
+    --paper: #f4ede0;
+    --gold: #b8924a;
+    --gold-light: #d4b07a;
+    --red: #8b1a1a;
+    --gray: #6b6058;
+    --gray-light: #9b9088;
+    --white: #fdfaf5;
+    --border: rgba(28,24,20,0.15);
+    --green: #2e7d32;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .logo-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    display: block;
+  }
+  .page-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(28,24,20,0.08);
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 560px) {
+    .section { padding: 2rem 1.25rem; }
+  }
+  .section-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .section-text {
+    font-size: 0.92rem;
+    color: var(--gray);
+    line-height: 2;
+    margin-bottom: 1.5rem;
+  }
+  .section-text strong { color: var(--ink); font-weight: 500; }
+
+  /* 解約フォーム */
+  .cancel-form { margin-top: 0; }
+  .cancel-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+  .cancel-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+  }
+  .cancel-input:focus { outline: none; border-color: var(--gold); }
+  .cancel-input.error { border-color: var(--red); }
+  .cancel-hint {
+    font-size: 0.78rem;
+    color: var(--gray-light);
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .btn-cancel {
+    display: block;
+    width: 100%;
+    background: var(--white);
+    color: var(--red);
+    border: 1.5px solid var(--red);
+    padding: 0.9rem;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .btn-cancel:hover { background: var(--red); color: var(--white); }
+  .btn-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .cancel-message {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .cancel-message.error { background: #fbe9e7; color: var(--red); display: block; }
+
+  /* 問い合わせ情報 */
+  .info-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+  .info-list li {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .info-list li:last-child { border-bottom: none; }
+  .info-label {
+    flex-shrink: 0;
+    width: 80px;
+    color: var(--gray-light);
+    font-size: 0.82rem;
+  }
+  .info-value {
+    color: var(--ink);
+  }
+  .info-value a {
+    color: var(--gold);
+    text-decoration: underline;
+  }
+
+  /* 問い合わせフォーム */
+  .contact-form { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .form-input.error, .form-textarea.error { border-color: var(--red); }
+  .form-select { appearance: auto; }
+  .form-textarea { resize: vertical; min-height: 120px; }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .form-message {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .form-message.success { background: #e8f5e9; color: var(--green); display: block; }
+  .form-message.error { background: #fbe9e7; color: var(--red); display: block; }
+
+  /* フッター */
+  .footer {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .footer a {
+    color: var(--gray);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .footer a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<a href="./" class="logo">
+  業界紙つくーる
+  <span class="logo-en">INDUSTRY PAPER MAKER</span>
+</a>
+
+<h1 class="page-title">解約・お問い合わせ</h1>
+
+<!-- ===== 解約セクション ===== -->
+<div class="section">
+  <div class="section-icon">📋</div>
+  <h2 class="section-title">解約・プラン変更</h2>
+  <p class="section-text">
+    解約はいつでも可能です。<br>
+    解約後は<strong>当月末まで配信が継続</strong>されます。<br>
+    翌月からの請求は発生しません。
+  </p>
+
+  <label class="cancel-label" for="cancelEmail">ご契約時のメールアドレス</label>
+  <input type="email" class="cancel-input" id="cancelEmail" placeholder="your@email.com">
+  <div class="cancel-hint">Stripe決済時に使用したメールアドレスを入力してください</div>
+
+  <button class="btn-cancel" id="cancelBtn">解約手続きをする →</button>
+  <div class="cancel-message" id="cancelMessage"></div>
+</div>
+
+<!-- ===== お問い合わせセクション ===== -->
+<div class="section">
+  <div class="section-icon">✉️</div>
+  <h2 class="section-title">お問い合わせ</h2>
+
+  <ul class="info-list">
+    <li>
+      <span class="info-label">メール</span>
+      <span class="info-value"><a href="mailto:hiroshinagano0113@gmail.com">hiroshinagano0113@gmail.com</a></span>
+    </li>
+    <li>
+      <span class="info-label">対応時間</span>
+      <span class="info-value">平日 10:00〜18:00</span>
+    </li>
+    <li>
+      <span class="info-label">返信目安</span>
+      <span class="info-value">1〜2営業日以内</span>
+    </li>
+  </ul>
+
+  <div class="contact-form">
+    <form id="contactForm">
+      <div class="form-group">
+        <label class="form-label" for="contactName">お名前</label>
+        <input type="text" class="form-input" id="contactName" placeholder="山田太郎" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contactEmail">メールアドレス</label>
+        <input type="email" class="form-input" id="contactEmail" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contactSubject">件名</label>
+        <select class="form-select" id="contactSubject" required>
+          <option value="">選択してください</option>
+          <option value="配信内容について">配信内容について</option>
+          <option value="請求について">請求について</option>
+          <option value="解約について">解約について</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contactMessage">メッセージ</label>
+        <textarea class="form-textarea" id="contactMessage" placeholder="お問い合わせ内容をご記入ください" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" id="contactSubmit">送信する</button>
+      <div class="form-message" id="contactMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="./">← トップページに戻る</a>
+</div>
+
+<script>
+  var WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
+
+  // ===== 解約（Stripe Customer Portal） =====
+  var cancelBtn = document.getElementById('cancelBtn');
+  var cancelMsg = document.getElementById('cancelMessage');
+
+  cancelBtn.addEventListener('click', function() {
+    var email = document.getElementById('cancelEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('cancelEmail').classList.add('error');
+      return;
+    }
+    document.getElementById('cancelEmail').classList.remove('error');
+
+    cancelBtn.disabled = true;
+    cancelBtn.textContent = '接続中…';
+    cancelMsg.className = 'cancel-message';
+    cancelMsg.style.display = 'none';
+
+    fetch(WORKER_URL + '/create-portal-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email }),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        cancelMsg.textContent = data.error || 'エラーが発生しました。';
+        cancelMsg.className = 'cancel-message error';
+        cancelBtn.disabled = false;
+        cancelBtn.textContent = '解約手続きをする →';
+      }
+    })
+    .catch(function() {
+      cancelMsg.textContent = '通信エラーが発生しました。もう一度お試しください。';
+      cancelMsg.className = 'cancel-message error';
+      cancelBtn.disabled = false;
+      cancelBtn.textContent = '解約手続きをする →';
+    });
+  });
+
+  // ===== お問い合わせフォーム =====
+  var contactForm = document.getElementById('contactForm');
+  var contactSubmit = document.getElementById('contactSubmit');
+  var contactMsg = document.getElementById('contactMsg');
+
+  contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var name = document.getElementById('contactName').value.trim();
+    var email = document.getElementById('contactEmail').value.trim();
+    var subject = document.getElementById('contactSubject').value;
+    var message = document.getElementById('contactMessage').value.trim();
+
+    if (!name || !email || !subject || !message) return;
+
+    contactSubmit.disabled = true;
+    contactSubmit.textContent = '送信中…';
+    contactMsg.className = 'form-message';
+    contactMsg.style.display = 'none';
+
+    fetch(WORKER_URL + '/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        industry: '【問い合わせ】' + subject,
+        purpose: message,
+        audience: '—',
+        frequency: '—',
+        title: name,
+        tone: '—',
+        plan: '—',
+      }),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        contactMsg.textContent = 'お問い合わせを受け付けました。1〜2営業日以内にご返信いたします。';
+        contactMsg.className = 'form-message success';
+        contactForm.reset();
+      } else {
+        contactMsg.textContent = '送信に失敗しました。もう一度お試しください。';
+        contactMsg.className = 'form-message error';
+      }
+      contactSubmit.disabled = false;
+      contactSubmit.textContent = '送信する';
+    })
+    .catch(function() {
+      contactMsg.textContent = '通信エラーが発生しました。もう一度お試しください。';
+      contactMsg.className = 'form-message error';
+      contactSubmit.disabled = false;
+      contactSubmit.textContent = '送信する';
+    });
+  });
+</script>
+</body>
+</html>

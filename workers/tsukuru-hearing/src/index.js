@@ -104,6 +104,9 @@ export default {
     if (url.pathname === '/onboarding') {
       return handleOnboarding(request, env, origin);
     }
+    if (url.pathname === '/create-portal-session') {
+      return handleCreatePortalSession(request, env, origin);
+    }
     if (url.pathname !== '/api/hearing-summary') {
       return json({ error: 'Not found' }, 404, origin);
     }
@@ -508,6 +511,68 @@ async function handleOnboarding(request, env, origin) {
   } catch (err) {
     console.error('Onboarding error:', err.message);
     return json({ ok: false, error: err.message }, 500, origin);
+  }
+}
+
+// ===== /create-portal-session — Stripe Customer Portal =====
+async function handleCreatePortalSession(request, env, origin) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON' }, 400, origin);
+  }
+
+  const { email } = body;
+  if (!email) {
+    return json({ error: 'Missing email' }, 400, origin);
+  }
+
+  try {
+    // メールアドレスから顧客を検索
+    const searchParams = new URLSearchParams();
+    searchParams.append('email', email);
+    searchParams.append('limit', '1');
+
+    const searchRes = await fetch(STRIPE_API_URL + '/customers?' + searchParams.toString(), {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+      },
+    });
+
+    const searchData = await searchRes.json();
+    if (!searchRes.ok || !searchData.data || searchData.data.length === 0) {
+      return json({ error: 'このメールアドレスに紐づく契約が見つかりません。ご契約時のメールアドレスをご確認ください。' }, 404, origin);
+    }
+
+    const customerId = searchData.data[0].id;
+
+    // Customer Portalセッション作成
+    const portalParams = new URLSearchParams();
+    portalParams.append('customer', customerId);
+    portalParams.append('return_url', 'https://paul13131313.github.io/tsukuru-lp/contact.html');
+
+    const portalRes = await fetch(STRIPE_API_URL + '/billing_portal/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: portalParams.toString(),
+    });
+
+    const portalData = await portalRes.json();
+    if (!portalRes.ok) {
+      console.error('Stripe Portal error:', JSON.stringify(portalData));
+      return json({ error: portalData.error?.message || 'ポータルセッションの作成に失敗しました。' }, 500, origin);
+    }
+
+    return json({ url: portalData.url }, 200, origin);
+
+  } catch (err) {
+    console.error('Portal session error:', err.message);
+    return json({ error: err.message }, 500, origin);
   }
 }
 
