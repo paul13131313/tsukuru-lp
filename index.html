@@ -2091,6 +2091,7 @@
   (function() {
     const WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
     const NOTIFY_URL = WORKER_URL + '/notify';
+    const CHECKOUT_URL = WORKER_URL + '/create-checkout';
     const STEPS = [
       { key: 'industry', question: 'どんなお仕事をされていますか？', type: 'chips',
         options: ['不動産業', '税理士・会計士', '社労士・弁護士', '製造業・商社', '地域団体・商工会', 'その他'] },
@@ -2370,8 +2371,45 @@
       var area = document.getElementById('hInput');
       if (area) area.innerHTML = '';
 
-      // Workerの/notifyエンドポイント経由でResendメール送信
+      // ローディング表示
+      addBotMessage('決済ページに接続しています…');
+
+      // Stripe Checkoutセッション作成 → リダイレクト
       var planKey = PLAN_MAP[answers.audience] || 'standard';
+      fetch(CHECKOUT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: planKey,
+          email: email,
+          answers: {
+            industry: answers.industry,
+            purpose: answers.purpose,
+            audience: answers.audience,
+            frequency: answers.frequency,
+            title: answers.title || '未定',
+            tone: answers.tone,
+          },
+        }),
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          console.error('Checkout error:', data.error);
+          // フォールバック: /notifyで通知してshowDone
+          fallbackNotify(email, planKey);
+        }
+      })
+      .catch(function(err) {
+        console.error('Checkout fetch error:', err);
+        fallbackNotify(email, planKey);
+      });
+    }
+
+    // Stripe Checkout失敗時のフォールバック
+    function fallbackNotify(email, planKey) {
       fetch(NOTIFY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2386,7 +2424,6 @@
           plan: PLAN_INFO[planKey].name,
         }),
       }).catch(function() {});
-
       showDone();
     }
 

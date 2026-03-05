@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配信設定 — 業界紙つくーる</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1814;
+    --paper: #f4ede0;
+    --gold: #b8924a;
+    --gold-light: #d4b07a;
+    --red: #8b1a1a;
+    --gray: #6b6058;
+    --gray-light: #9b9088;
+    --white: #fdfaf5;
+    --border: rgba(28,24,20,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .onb-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(28,24,20,0.08);
+  }
+  .onb-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .onb-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+  .onb-desc {
+    font-size: 0.9rem;
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  .onb-guide {
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--gray);
+  }
+  .onb-guide-title {
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .onb-guide a {
+    color: var(--gold);
+    text-decoration: underline;
+  }
+  .onb-guide ol {
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  .onb-guide li {
+    margin-bottom: 0.25rem;
+  }
+  .onb-form { margin-top: 0; }
+  .onb-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+  .onb-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .onb-input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .onb-input.error {
+    border-color: var(--red);
+  }
+  .onb-input-hint {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+  .onb-submit {
+    display: block;
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.9rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .onb-submit:hover { opacity: 0.85; }
+  .onb-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .onb-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .onb-message.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    display: block;
+  }
+  .onb-message.error {
+    background: #fbe9e7;
+    color: var(--red);
+    display: block;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .logo-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    display: block;
+  }
+  .onb-done {
+    text-align: center;
+    display: none;
+  }
+  .onb-done.show { display: block; }
+  .onb-done-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1.5rem;
+  }
+  .onb-done-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .onb-done-text {
+    font-size: 0.9rem;
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+  .onb-back-link {
+    display: inline-block;
+    color: var(--gray);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .onb-back-link:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<a href="./" class="logo">
+  業界紙つくーる
+  <span class="logo-en">INDUSTRY PAPER MAKER</span>
+</a>
+
+<div class="onb-card">
+  <!-- フォーム画面 -->
+  <div id="onbForm">
+    <div class="onb-icon">📋</div>
+    <h1 class="onb-title">配信設定をはじめましょう</h1>
+    <p class="onb-desc">
+      メール配信にはResendを使用します。<br>
+      APIキーを登録いただければ、あとは私たちが設定を進めます。
+    </p>
+
+    <div class="onb-guide">
+      <div class="onb-guide-title">Resend APIキーの取得方法</div>
+      <ol>
+        <li><a href="https://resend.com/signup" target="_blank" rel="noopener">Resendに無料登録</a></li>
+        <li>ダッシュボードの「API Keys」を開く</li>
+        <li>「Create API Key」で新しいキーを発行</li>
+        <li>キーをコピーして下の入力欄に貼り付け</li>
+      </ol>
+    </div>
+
+    <form class="onb-form" id="onboardingForm">
+      <label class="onb-label" for="onbEmail">メールアドレス</label>
+      <input type="email" class="onb-input" id="onbEmail" placeholder="your@email.com" required>
+
+      <label class="onb-label" for="onbApiKey">Resend APIキー</label>
+      <input type="text" class="onb-input" id="onbApiKey" placeholder="re_xxxxxxxxxx" required>
+      <div class="onb-input-hint">re_ で始まる文字列です</div>
+
+      <button type="submit" class="onb-submit" id="onbSubmit">登録する</button>
+
+      <div class="onb-message" id="onbMessage"></div>
+    </form>
+  </div>
+
+  <!-- 完了画面 -->
+  <div class="onb-done" id="onbDone">
+    <div class="onb-done-icon">✅</div>
+    <h2 class="onb-done-title">登録が完了しました！</h2>
+    <p class="onb-done-text">
+      APIキーを確認次第、配信設定を進めます。<br>
+      準備が整い次第、メールでご連絡いたします。
+    </p>
+    <a href="./" class="onb-back-link">← トップページに戻る</a>
+  </div>
+</div>
+
+<script>
+  var WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
+  var form = document.getElementById('onboardingForm');
+  var submitBtn = document.getElementById('onbSubmit');
+  var messageEl = document.getElementById('onbMessage');
+
+  // URLパラメータからsession_idを取得
+  var params = new URLSearchParams(window.location.search);
+  var sessionId = params.get('session_id') || '';
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var email = document.getElementById('onbEmail').value.trim();
+    var apiKey = document.getElementById('onbApiKey').value.trim();
+
+    // バリデーション
+    if (!email || !email.includes('@')) {
+      document.getElementById('onbEmail').classList.add('error');
+      return;
+    }
+    document.getElementById('onbEmail').classList.remove('error');
+
+    if (!apiKey || !apiKey.startsWith('re_')) {
+      document.getElementById('onbApiKey').classList.add('error');
+      showMessage('APIキーは re_ で始まる文字列を入力してください。', 'error');
+      return;
+    }
+    document.getElementById('onbApiKey').classList.remove('error');
+
+    // 送信
+    submitBtn.disabled = true;
+    submitBtn.textContent = '送信中…';
+    messageEl.className = 'onb-message';
+    messageEl.style.display = 'none';
+
+    fetch(WORKER_URL + '/onboarding', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        resendApiKey: apiKey,
+        sessionId: sessionId,
+      }),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        // 完了画面を表示
+        document.getElementById('onbForm').style.display = 'none';
+        document.getElementById('onbDone').classList.add('show');
+      } else {
+        showMessage('送信に失敗しました。もう一度お試しください。', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '登録する';
+      }
+    })
+    .catch(function() {
+      showMessage('通信エラーが発生しました。もう一度お試しください。', 'error');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '登録する';
+    });
+  });
+
+  function showMessage(text, type) {
+    messageEl.textContent = text;
+    messageEl.className = 'onb-message ' + type;
+  }
+</script>
+</body>
+</html>

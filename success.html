@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お申し込み完了 — 業界紙つくーる</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1814;
+    --paper: #f4ede0;
+    --gold: #b8924a;
+    --gold-light: #d4b07a;
+    --red: #8b1a1a;
+    --gray: #6b6058;
+    --white: #fdfaf5;
+    --border: rgba(28,24,20,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .success-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(28,24,20,0.08);
+  }
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 1.5rem;
+  }
+  .success-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .success-text {
+    font-size: 0.95rem;
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  .success-steps {
+    text-align: left;
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .success-steps-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+  .success-step {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--gray);
+  }
+  .success-step:last-child { margin-bottom: 0; }
+  .success-step-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .success-btn {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    margin-bottom: 1rem;
+  }
+  .success-btn:hover { opacity: 0.85; }
+  .success-link {
+    display: block;
+    color: var(--gray);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .success-link:hover { color: var(--ink); }
+  .success-session-id {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--gray);
+    word-break: break-all;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    margin-bottom: 2rem;
+  }
+  .logo-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<a href="./" class="logo">
+  業界紙つくーる
+  <span class="logo-en">INDUSTRY PAPER MAKER</span>
+</a>
+
+<div class="success-card">
+  <div class="success-icon">🎉</div>
+  <h1 class="success-title">お申し込みありがとうございます！</h1>
+  <p class="success-text">
+    決済が正常に完了しました。<br>
+    担当者より<strong>2営業日以内</strong>にご連絡いたします。
+  </p>
+
+  <div class="success-steps">
+    <div class="success-steps-title">これからの流れ</div>
+    <div class="success-step">
+      <span class="success-step-num">1</span>
+      <span>配信設定のオンボーディング（Resend APIキーの登録）</span>
+    </div>
+    <div class="success-step">
+      <span class="success-step-num">2</span>
+      <span>ヒアリング内容をもとに、デザイン制作を開始</span>
+    </div>
+    <div class="success-step">
+      <span class="success-step-num">3</span>
+      <span>初回号の原稿確認 → 配信スタート！</span>
+    </div>
+  </div>
+
+  <a href="onboarding.html" class="success-btn">配信設定をはじめる →</a>
+  <a href="./" class="success-link">トップページに戻る</a>
+
+  <div class="success-session-id" id="sessionId"></div>
+</div>
+
+<script>
+  // URLパラメータからセッションIDを表示
+  var params = new URLSearchParams(window.location.search);
+  var sessionId = params.get('session_id');
+  if (sessionId) {
+    document.getElementById('sessionId').textContent = 'お申込み番号: ' + sessionId;
+  }
+</script>
+</body>
+</html>
