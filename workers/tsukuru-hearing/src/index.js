@@ -11,7 +11,7 @@ const ALLOWED_ORIGINS = [
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const MODEL = 'claude-haiku-4-5-20251001';
-const ARTICLE_MODEL = 'claude-opus-4-6';
+const ARTICLE_MODEL = 'claude-sonnet-4-20250514';
 const RESEND_API_URL = 'https://api.resend.com/emails';
 const RESEND_BROADCAST_URL = 'https://api.resend.com/broadcasts';
 const RESEND_AUDIENCES_URL = 'https://api.resend.com/audiences';
@@ -414,43 +414,110 @@ async function verifyStripeSignature(payload, sigHeader, secret) {
   return expectedSig === signature;
 }
 
+// ===== 業種別カラーテーマ =====
+function getIndustryTheme(industry) {
+  const themes = {
+    '不動産業': { primary: '#1a3a5c', accent: '#4a90d9', light: '#e8f0fe', emoji: '🏢', label: '不動産' },
+    '税理士・会計士': { primary: '#2d5016', accent: '#5a9e2f', light: '#edf7e5', emoji: '📊', label: '税務・会計' },
+    '社労士・弁護士': { primary: '#4a1942', accent: '#8b3a7d', light: '#f5e8f3', emoji: '⚖️', label: '法務・労務' },
+    '製造業・商社': { primary: '#5c3d1a', accent: '#d4922a', light: '#fef5e8', emoji: '🏭', label: '製造・商社' },
+    '地域団体・商工会': { primary: '#1a4a3d', accent: '#2e9e7d', light: '#e5f7f2', emoji: '🤝', label: '地域・団体' },
+    '飲食業': { primary: '#8b2500', accent: '#e8593a', light: '#fde8e3', emoji: '🍽️', label: '飲食' },
+    '医療・介護': { primary: '#1a5c5c', accent: '#2aa5a5', light: '#e5f5f5', emoji: '🏥', label: '医療・介護' },
+    'IT・テクノロジー': { primary: '#1a1a4a', accent: '#5a5ad9', light: '#ebebfe', emoji: '💻', label: 'IT' },
+  };
+  return themes[industry] || { primary: '#1c1814', accent: '#b8924a', light: '#f4ede0', emoji: '📰', label: '業界' };
+}
+
 // ===== 記事自動生成 =====
 async function generateArticle(clientData, env) {
   const { answers, issueNumber } = clientData;
   const today = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
   const titleText = answers.title || '業界通信';
+  const theme = getIndustryTheme(answers.industry);
 
-  const systemPrompt = `あなたは業界紙・メールマガジンの編集者です。
-指定された業種・目的・トーンに合わせて、メールで配信する業界紙の1号分を作成してください。
+  const systemPrompt = `あなたはプロの業界紙編集長です。読者が「毎号楽しみにしている」と感じるほどの質の高いメールマガジンを制作してください。
+これはサンプルではなく、実際のクライアントに届ける本物の創刊号です。受注に直結する品質が求められます。
 
-出力はメール配信用のインラインCSS付きHTML（<html>タグから開始）で返してください。
-外部CSSやJavaScriptは一切使わないこと。画像タグも不要です。
-HTMLのみ返してください。説明文や前置きは不要です。
+## 出力ルール
+- <html>タグから始まる完全なHTMLを出力
+- 外部CSS・JavaScript・画像タグは一切使用禁止
+- 全てインラインCSS（style属性）で指定
+- テーブルレイアウトでメールクライアント（Gmail, Outlook, Yahoo!メール）互換性を確保
+- コードブロック（\`\`\`）で囲まない。純粋なHTMLのみ出力
+- 説明文や前置きは一切不要
 
-構成:
-1. ヘッダー: 「${titleText}」タイトルと号数（第${issueNumber}号）、日付（${today}）
-2. メイン記事: 業界の最新トレンドや役立つ情報（300文字程度）
-3. サブ記事1: 関連トピック（150文字程度）
-4. サブ記事2: 関連トピック（150文字程度）
-5. 編集後記: 編集者からの一言（50文字程度）
-6. フッター: 配信元情報
+## 記事構成（必ずこの順番で、すべて含めること）
 
-デザイン指針:
-- 新聞風の品のあるレイアウト
-- フォントファミリ: 'Hiragino Mincho ProN', 'Yu Mincho', serif（見出し）, sans-serif（本文）
-- 配色: #1c1814（墨）ベース、#b8924a（金）をアクセント、背景#f4ede0（和紙）
-- max-width: 600px, margin: 0 auto
-- 全てインラインCSSで指定
-- テーブルレイアウトでメールクライアント互換性を確保`;
+### 1. ヘッダー
+- 紙面名「${titleText}」を大きく表示
+- 号数: 第${issueNumber}号
+- 発行日: ${today}
+- キャッチコピー: 業種に合わせた1行コピー（例:「${theme.label}の"いま"を、毎号お届けします」）
+- 背景色: ${theme.primary}（業種テーマカラー）、文字色: #ffffff
 
-  const userPrompt = `業種: ${answers.industry}
+### 2. 特集記事（500字以上）
+- ${theme.emoji} 見出しにアイコン絵文字を付ける
+- 業界の重要トピック・最新トレンドを深掘り
+- 具体的な数字・事例・企業名（架空でもリアルに）を含める
+- 背景色 ${theme.light} のハイライトボックスで囲む
+- 見出しは ${theme.accent} カラー
+
+### 3. ニュース3本（各200字以上）
+- 📌 📊 🏢 など、各ニュースの冒頭にアイコン絵文字を配置
+- それぞれ異なるトピック（規制変更、市場動向、テクノロジーなど）
+- 見出し + 本文の形式
+- ニュース間は罫線（border-bottom）で区切る
+
+### 4. データで見る${theme.label}
+- 数字を使った業界分析セクション
+- 3〜4項目のデータを表形式（table）で見やすく表示
+- 例:「前年比+12.3%」「市場規模: 4.5兆円」など具体的な数値
+- テーブルの罫線・背景色を使って視認性を高める
+- 出典（架空でもリアルな名称）を記載
+
+### 5. ${theme.label}カレンダー
+- 今月の重要イベント・締切・季節情報を3〜5項目
+- 日付 + イベント名 + 簡単な補足の形式
+- 背景色付きのリスト風レイアウト
+
+### 6. 編集後記（100字以上）
+- 編集長の個人的な視点や今号のポイントを振り返る
+- 次号の予告も一言添える
+- 温かみのある人間味あるトーンで
+
+### 7. フッター
+- 配信元情報のプレースホルダー:「このメールは[会社名]よりお届けしています」
+- 配信停止リンクのプレースホルダー:「配信停止はこちら」（リンクは # で仮置き）
+- Copyright表記
+
+## デザイン指針
+- max-width: 600px; margin: 0 auto
+- モバイル対応: フォントサイズ最低14px、パディング十分に
+- ヘッダー: 背景 ${theme.primary}、テキスト白、パディング上下24px
+- セクション区切り: 左ボーダー4px ${theme.accent} + パディング
+- 見出し: font-size 20px、色 ${theme.primary}、font-weight bold
+- 本文: font-size 15px、line-height 1.8、色 #333333
+- フォントファミリ: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif（本文）/ 'Hiragino Mincho ProN', 'Yu Mincho', serif（タイトル・見出し）
+- データテーブル: border-collapse、交互背景色（白 / ${theme.light}）
+- 全体の背景: #f5f5f5（外枠）、#ffffff（コンテンツ部分）`;
+
+  const userPrompt = `以下の情報をもとに、本物の創刊号を生成してください。
+
+業種: ${answers.industry}
 目的: ${answers.purpose}
 配信規模: ${answers.audience}
 頻度: ${answers.frequency}
 タイトル: ${titleText}
 トーン: ${answers.tone}
 号数: 第${issueNumber}号
-日付: ${today}`;
+発行日: ${today}
+
+特に重要なポイント:
+- ${answers.industry}の読者が「これは役に立つ」と感じる具体的な情報を書いてください
+- 抽象的な記述を避け、数字・事例・トレンド名を積極的に盛り込んでください
+- 「${answers.tone}」のトーンを厳密に守ってください
+- 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください`;
 
   try {
     const response = await fetch(CLAUDE_API_URL, {
@@ -462,7 +529,7 @@ HTMLのみ返してください。説明文や前置きは不要です。
       },
       body: JSON.stringify({
         model: ARTICLE_MODEL,
-        max_tokens: 4000,
+        max_tokens: 8000,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
       }),
@@ -477,8 +544,8 @@ HTMLのみ返してください。説明文や前置きは不要です。
     const result = await response.json();
 
     if (result.usage) {
-      const cost = ((result.usage.input_tokens / 1_000_000) * 15.0 + (result.usage.output_tokens / 1_000_000) * 75.0) * 150;
-      console.log(`Claude (opus): in=${result.usage.input_tokens} out=${result.usage.output_tokens} ≈${cost.toFixed(1)}円`);
+      const cost = ((result.usage.input_tokens / 1_000_000) * 3.0 + (result.usage.output_tokens / 1_000_000) * 15.0) * 150;
+      console.log(`Claude (sonnet): in=${result.usage.input_tokens} out=${result.usage.output_tokens} ≈${cost.toFixed(1)}円`);
     }
 
     const html = result.content?.find(b => b.type === 'text')?.text || '';
