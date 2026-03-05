@@ -965,63 +965,372 @@
     margin-bottom: 48px;
     line-height: 2;
   }
-  .contact-form {
+  /* ===== HEARING CHAT ===== */
+  .hearing-chat {
+    max-width: 640px;
+    margin: 0 auto;
+    background: rgba(244,237,224,0.04);
+    border: 1px solid rgba(244,237,224,0.1);
+    overflow: hidden;
+  }
+  .hearing-header {
+    padding: 24px 24px 0;
+    text-align: center;
+  }
+  .hearing-progress {
+    padding: 16px 24px 0;
+  }
+  .hearing-progress-bar {
+    height: 2px;
+    background: rgba(244,237,224,0.1);
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .hearing-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .hearing-progress-text {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    text-align: left;
+    justify-content: space-between;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    color: rgba(244,237,224,0.4);
+    letter-spacing: 0.15em;
   }
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+  .hearing-messages {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 16px 24px;
+    scroll-behavior: smooth;
   }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: rgba(244,237,224,0.6);
+  .hearing-messages::-webkit-scrollbar { width: 3px; }
+  .hearing-messages::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+  .hearing-bubble {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: hearingFadeUp 0.35s ease forwards;
   }
-  .form-label .req {
-    color: var(--gold);
-    margin-left: 4px;
+  @keyframes hearingFadeUp {
+    to { opacity: 1; transform: translateY(0); }
   }
-  .form-input, .form-select, .form-textarea {
+  .hearing-bubble--bot {
+    justify-content: flex-start;
+  }
+  .hearing-bubble--user {
+    justify-content: flex-end;
+  }
+  .hearing-avatar {
+    width: 26px;
+    height: 26px;
+    background: var(--gold);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .hearing-text {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    max-width: 80%;
+  }
+  .hearing-text--bot {
+    background: rgba(244,237,224,0.08);
+    border: 1px solid rgba(244,237,224,0.1);
+    color: var(--paper);
+  }
+  .hearing-text--user {
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .hearing-input-area {
+    border-top: 1px solid rgba(244,237,224,0.08);
+    padding: 14px 20px 18px;
+  }
+  .hearing-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hearing-chip {
+    background: transparent;
+    border: 1px solid rgba(244,237,224,0.25);
+    color: var(--paper);
+    padding: 8px 16px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .hearing-chip:hover {
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+  .hearing-text-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .hearing-text-input {
+    flex: 1;
     background: rgba(244,237,224,0.06);
     border: 1px solid rgba(244,237,224,0.2);
     color: var(--paper);
-    padding: 12px 16px;
+    padding: 10px 14px;
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     outline: none;
     transition: border-color 0.2s;
-    width: 100%;
   }
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
+  .hearing-text-input:focus {
     border-color: var(--gold-light);
   }
-  .form-select option { background: var(--ink); color: var(--paper); }
-  .form-textarea { resize: vertical; min-height: 100px; }
-  .btn-submit {
-    width: 100%;
-    justify-content: center;
+  .hearing-text-input::placeholder {
+    color: rgba(244,237,224,0.3);
+  }
+  .hearing-send-btn {
+    width: 38px;
+    height: 38px;
     background: var(--gold);
     color: var(--ink);
-    font-family: 'Noto Serif JP', serif;
-    font-size: 0.92rem;
-    font-weight: 700;
-    padding: 18px;
-    margin-top: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
   }
-  .btn-submit:hover {
+  .hearing-send-btn:hover {
     background: var(--gold-light);
-    transform: translateY(-1px);
   }
-  .form-note {
-    font-size: 0.72rem;
-    color: rgba(244,237,224,0.4);
+  .hearing-dots {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(244,237,224,0.08);
+    border: 1px solid rgba(244,237,224,0.1);
+  }
+  .hearing-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: hearingPulse 1.2s ease infinite;
+  }
+  .hearing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .hearing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes hearingPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  /* 結果カード */
+  .hearing-card {
+    background: rgba(244,237,224,0.06);
+    border: 1px solid rgba(184,146,74,0.25);
+    padding: 20px;
+    margin: 14px 0;
+  }
+  .hearing-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .hearing-card-label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--paper);
+  }
+  .hearing-card-badge {
+    background: var(--gold);
+    color: var(--ink);
+    padding: 4px 14px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .hearing-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+    margin-bottom: 16px;
+  }
+  .hearing-card-item {
+    border-bottom: 1px solid rgba(244,237,224,0.08);
+    padding-bottom: 6px;
+  }
+  .hearing-card-item-label {
+    font-size: 0.58rem;
+    color: rgba(244,237,224,0.5);
+    margin-bottom: 2px;
+  }
+  .hearing-card-item-value {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--paper);
+  }
+  .hearing-card-prices {
+    display: flex;
+    gap: 24px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(244,237,224,0.1);
+  }
+  .hearing-card-price-label {
+    font-size: 0.6rem;
+    color: rgba(244,237,224,0.5);
+    margin-bottom: 2px;
+  }
+  .hearing-card-price-value {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--paper);
+  }
+  .hearing-cta {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .hearing-cta-yes {
+    flex: 2;
+    padding: 14px;
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: background 0.15s;
+  }
+  .hearing-cta-yes:hover { background: var(--gold-light); }
+  .hearing-cta-later {
+    flex: 1;
+    padding: 14px;
+    background: transparent;
+    color: rgba(244,237,224,0.6);
+    border: 1px solid rgba(244,237,224,0.15);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .hearing-cta-later:hover { border-color: rgba(244,237,224,0.35); }
+  /* 完了画面 */
+  .hearing-done {
+    padding: 40px 28px;
     text-align: center;
-    margin-top: 4px;
+  }
+  .hearing-done-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+  .hearing-done-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 10px;
+  }
+  .hearing-done-text {
+    font-size: 0.8rem;
+    color: rgba(244,237,224,0.6);
+    line-height: 2;
+    margin-bottom: 20px;
+  }
+  .hearing-email-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hearing-restart-btn {
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    padding: 10px 28px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: background 0.15s;
+  }
+  .hearing-restart-btn:hover { background: var(--gold-light); }
+  /* スタート画面 */
+  .hearing-start {
+    padding: 48px 32px;
+    text-align: center;
+  }
+  .hearing-start-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gold);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin: 0 auto 16px;
+  }
+  .hearing-start-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 10px;
+    line-height: 1.8;
+  }
+  .hearing-start-desc {
+    font-size: 0.76rem;
+    color: rgba(244,237,224,0.55);
+    line-height: 1.9;
+    max-width: 300px;
+    margin: 0 auto 20px;
+  }
+  .hearing-start-btn {
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    padding: 12px 36px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: background 0.15s;
+  }
+  .hearing-start-btn:hover { background: var(--gold-light); }
+  @media (max-width: 600px) {
+    .hearing-card-grid { grid-template-columns: 1fr; }
+    .hearing-cta { flex-direction: column; }
+    .hearing-cta-yes, .hearing-cta-later { flex: auto; }
   }
 
   /* ===== FOOTER ===== */
@@ -1705,48 +2014,18 @@
   </div>
 </section>
 
-<!-- ===== CONTACT ===== -->
+<!-- ===== HEARING CHAT ===== -->
 <section class="section section--dark" id="contact">
   <div class="container">
     <div class="contact-inner">
-      <p style="font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px;">Contact</p>
-      <h2 class="contact-title reveal">まず、話だけでも<br>どうぞ。</h2>
-      <p class="contact-sub reveal">無料相談（30分）を受け付けています。<br>Zoomでもお電話でも。費用・条件はご相談の中でご説明します。</p>
-      <form class="contact-form reveal" action="https://formspree.io/f/mbdzrgal" method="POST">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">お名前<span class="req">*</span></label>
-            <input class="form-input" type="text" name="name" placeholder="山田 太郎" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">会社名・屋号</label>
-            <input class="form-input" type="text" name="company" placeholder="〇〇株式会社">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">業種<span class="req">*</span></label>
-          <select class="form-select" name="industry" required>
-            <option value="" disabled selected>選択してください</option>
-            <option>不動産業</option>
-            <option>士業（税理士・社労士・弁護士等）</option>
-            <option>製造業・商社</option>
-            <option>地域団体・業界団体</option>
-            <option>金融・保険</option>
-            <option>その他</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">メールアドレス<span class="req">*</span></label>
-          <input class="form-input" type="email" name="email" placeholder="your@email.com" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">ご相談内容</label>
-          <textarea class="form-textarea" name="message" placeholder="業種・現在の情報発信の状況・お悩みなどをお聞かせください。"></textarea>
-        </div>
-        <button type="submit" class="btn btn-submit btn-arrow">送信する</button>
-        <p class="form-note">送信後、2営業日以内にご連絡します。</p>
-      </form>
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px;">Hearing</p>
+      <h2 class="contact-title reveal">まず、お話を<br>聞かせてください。</h2>
+      <p class="contact-sub reveal">6つの質問に答えるだけで、最適なプランをご提案します。<br>ほぼタップで完結。所要時間は約2分です。</p>
     </div>
+    <div class="hearing-chat reveal" id="hearingChat">
+      <!-- JS が中身を描画 -->
+    </div>
+    <p style="text-align: center; margin-top: 12px; font-size: 0.63rem; color: rgba(244,237,224,0.35); letter-spacing: 0.05em;">入力内容はAIの応答生成にのみ使用されます</p>
   </div>
 </section>
 
@@ -1807,6 +2086,337 @@
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  // ===== HEARING CHAT =====
+  (function() {
+    const WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
+    const FORMSPREE_URL = 'https://formspree.io/f/mbdzrgal';
+    const STEPS = [
+      { key: 'industry', question: 'どんなお仕事をされていますか？', type: 'chips',
+        options: ['不動産業', '税理士・会計士', '社労士・弁護士', '製造業・商社', '地域団体・商工会', 'その他'] },
+      { key: 'purpose', question: '業界紙を届けたい目的は？', type: 'chips',
+        options: ['既存顧客との関係維持', '新規顧客の獲得', '専門家としての信頼構築', '取引先への情報提供', 'まだ明確でない'] },
+      { key: 'audience', question: '配信したい人数の規模は？', type: 'chips',
+        options: ['〜100人', '100〜500人', '500〜2,000人', '2,000人以上'] },
+      { key: 'frequency', question: 'どのくらいの頻度で届けたいですか？', type: 'chips',
+        options: ['月2回', '週1回', '週2回以上', 'まだ決めていない'] },
+      { key: 'title', question: '紙面のタイトルイメージはありますか？', type: 'text',
+        placeholder: '例：不動産マーケット週報、税務インサイト など（未定でもOK）' },
+      { key: 'tone', question: 'どんなトーンで届けたいですか？', type: 'chips',
+        options: ['専門的・格調ある', '読みやすく・親しみやすい', 'データ重視・ビジネスライク', 'おまかせ'] },
+    ];
+    const PLAN_MAP = {
+      '〜100人': 'starter', '100〜500人': 'starter',
+      '500〜2,000人': 'standard', '2,000人以上': 'premium',
+    };
+    const PLAN_INFO = {
+      starter:  { name: 'スターター',   initial: '49,800円',  monthly: '19,800円/月' },
+      standard: { name: 'スタンダード', initial: '98,000円',  monthly: '39,800円/月' },
+      premium:  { name: 'プレミアム',   initial: '198,000円', monthly: '79,800円/月' },
+    };
+
+    const chat = document.getElementById('hearingChat');
+    let stepIdx = 0;
+    let answers = {};
+
+    function init() {
+      stepIdx = 0;
+      answers = {};
+      chat.innerHTML = '';
+      showStart();
+    }
+
+    function showStart() {
+      chat.innerHTML = `
+        <div class="hearing-start">
+          <div class="hearing-start-icon">📰</div>
+          <h3 class="hearing-start-title">6問に答えるだけで、<br>最適なプランをご提案します。</h3>
+          <p class="hearing-start-desc">ほぼタップで完結。所要時間は約2分です。<br>最後に「初回無料でつくりますか？」をお聞きします。</p>
+          <button class="hearing-start-btn" id="hearingStartBtn">はじめる →</button>
+        </div>`;
+      document.getElementById('hearingStartBtn').addEventListener('click', startChat);
+    }
+
+    function startChat() {
+      chat.innerHTML = `
+        <div class="hearing-progress" id="hProgress">
+          <div class="hearing-progress-bar"><div class="hearing-progress-fill" id="hProgressFill" style="width:${(1/STEPS.length)*100}%"></div></div>
+          <div class="hearing-progress-text"><span>STEP <span id="hStepNum">1</span> / ${STEPS.length}</span><span id="hPercent">${Math.round((1/STEPS.length)*100)}%</span></div>
+        </div>
+        <div class="hearing-messages" id="hMessages"></div>
+        <div class="hearing-input-area" id="hInput"></div>`;
+      addBotMessage(STEPS[0].question, function() {
+        renderInput(STEPS[0]);
+      });
+    }
+
+    function updateProgress() {
+      const n = Math.min(stepIdx + 1, STEPS.length);
+      const pct = Math.round((n / STEPS.length) * 100);
+      const fill = document.getElementById('hProgressFill');
+      const num = document.getElementById('hStepNum');
+      const pctEl = document.getElementById('hPercent');
+      if (fill) fill.style.width = pct + '%';
+      if (num) num.textContent = n;
+      if (pctEl) pctEl.textContent = pct + '%';
+    }
+
+    function scrollBottom() {
+      const msgs = document.getElementById('hMessages');
+      if (msgs) setTimeout(function() { msgs.scrollTop = msgs.scrollHeight; }, 50);
+    }
+
+    function addBotMessage(text, callback) {
+      var msgs = document.getElementById('hMessages');
+      if (!msgs) return;
+      // ローディングドット
+      var loadId = 'load-' + Date.now();
+      msgs.insertAdjacentHTML('beforeend',
+        '<div class="hearing-bubble hearing-bubble--bot" id="' + loadId + '">' +
+          '<div class="hearing-avatar">AI</div>' +
+          '<div class="hearing-dots"><div class="hearing-dot"></div><div class="hearing-dot"></div><div class="hearing-dot"></div></div>' +
+        '</div>');
+      scrollBottom();
+      setTimeout(function() {
+        var el = document.getElementById(loadId);
+        if (el) {
+          el.innerHTML =
+            '<div class="hearing-avatar">AI</div>' +
+            '<div class="hearing-text hearing-text--bot">' + text + '</div>';
+        }
+        scrollBottom();
+        if (callback) callback();
+      }, 500);
+    }
+
+    function addUserMessage(text) {
+      var msgs = document.getElementById('hMessages');
+      if (!msgs) return;
+      msgs.insertAdjacentHTML('beforeend',
+        '<div class="hearing-bubble hearing-bubble--user">' +
+          '<div class="hearing-text hearing-text--user">' + escapeHtml(text) + '</div>' +
+        '</div>');
+      scrollBottom();
+    }
+
+    function escapeHtml(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function renderInput(step) {
+      var area = document.getElementById('hInput');
+      if (!area) return;
+      if (step.type === 'chips') {
+        var html = '<div class="hearing-chips">';
+        step.options.forEach(function(opt) {
+          html += '<button class="hearing-chip" data-val="' + escapeHtml(opt) + '">' + escapeHtml(opt) + '</button>';
+        });
+        html += '</div>';
+        area.innerHTML = html;
+        area.querySelectorAll('.hearing-chip').forEach(function(btn) {
+          btn.addEventListener('click', function() { handleAnswer(btn.dataset.val); });
+        });
+      } else {
+        area.innerHTML =
+          '<div class="hearing-text-row">' +
+            '<input type="text" class="hearing-text-input" id="hTextInput" placeholder="' + escapeHtml(step.placeholder || '') + '">' +
+            '<button class="hearing-send-btn" id="hSendBtn">↑</button>' +
+          '</div>';
+        var input = document.getElementById('hTextInput');
+        var sendBtn = document.getElementById('hSendBtn');
+        sendBtn.addEventListener('click', function() { submitText(); });
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.isComposing) submitText();
+        });
+        input.focus();
+      }
+    }
+
+    function submitText() {
+      var input = document.getElementById('hTextInput');
+      var val = input ? input.value.trim() : '';
+      handleAnswer(val || '（未定）');
+    }
+
+    function handleAnswer(value) {
+      var step = STEPS[stepIdx];
+      answers[step.key] = value;
+      addUserMessage(value);
+      // 入力エリアをクリア
+      var area = document.getElementById('hInput');
+      if (area) area.innerHTML = '';
+      stepIdx++;
+      if (stepIdx < STEPS.length) {
+        updateProgress();
+        addBotMessage(STEPS[stepIdx].question, function() {
+          renderInput(STEPS[stepIdx]);
+        });
+      } else {
+        updateProgress();
+        requestSummary();
+      }
+    }
+
+    function requestSummary() {
+      addBotMessage('ありがとうございます！内容を確認しています…');
+      // ローディングドット表示
+      var msgs = document.getElementById('hMessages');
+      msgs.insertAdjacentHTML('beforeend',
+        '<div class="hearing-bubble hearing-bubble--bot" id="hLoading">' +
+          '<div class="hearing-avatar">AI</div>' +
+          '<div class="hearing-dots"><div class="hearing-dot"></div><div class="hearing-dot"></div><div class="hearing-dot"></div></div>' +
+        '</div>');
+      scrollBottom();
+
+      fetch(WORKER_URL + '/api/hearing-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers),
+      })
+      .then(function(r) { return r.ok ? r.json() : Promise.reject('API error'); })
+      .then(function(data) {
+        var loadEl = document.getElementById('hLoading');
+        if (loadEl) loadEl.remove();
+        showResult(data.summary, data.plan);
+      })
+      .catch(function() {
+        var loadEl = document.getElementById('hLoading');
+        if (loadEl) loadEl.remove();
+        // フォールバック: ローカルでプラン判定
+        var planKey = PLAN_MAP[answers.audience] || 'standard';
+        showResult('', { key: planKey, name: PLAN_INFO[planKey].name, initial: PLAN_INFO[planKey].initial, monthly: PLAN_INFO[planKey].monthly });
+      });
+    }
+
+    function showResult(summary, plan) {
+      if (summary) {
+        addBotMessage(summary);
+      }
+      var msgs = document.getElementById('hMessages');
+      // プランカード
+      var cardHtml =
+        '<div class="hearing-card">' +
+          '<div class="hearing-card-header">' +
+            '<span class="hearing-card-label">おすすめプラン</span>' +
+            '<span class="hearing-card-badge">' + escapeHtml(plan.name) + '</span>' +
+          '</div>' +
+          '<div class="hearing-card-grid">';
+      var items = [
+        ['業種', answers.industry], ['目的', answers.purpose],
+        ['配信規模', answers.audience], ['頻度', answers.frequency],
+        ['タイトル', answers.title || '未定'], ['トーン', answers.tone],
+      ];
+      items.forEach(function(item) {
+        cardHtml += '<div class="hearing-card-item"><div class="hearing-card-item-label">' + item[0] + '</div><div class="hearing-card-item-value">' + escapeHtml(item[1]) + '</div></div>';
+      });
+      cardHtml +=
+          '</div>' +
+          '<div class="hearing-card-prices">' +
+            '<div><div class="hearing-card-price-label">初期費用</div><div class="hearing-card-price-value">' + escapeHtml(plan.initial) + '</div></div>' +
+            '<div><div class="hearing-card-price-label">月額</div><div class="hearing-card-price-value">' + escapeHtml(plan.monthly) + '</div></div>' +
+          '</div>' +
+        '</div>';
+      msgs.insertAdjacentHTML('beforeend', '<div class="hearing-bubble hearing-bubble--bot" style="display:block;">' + cardHtml + '</div>');
+      scrollBottom();
+
+      // CTA
+      setTimeout(function() {
+        addBotMessage('まず<strong>初回無料</strong>で1号分つくってみませんか？<br>実際の紙面を見てから、続けるかどうか決めていただけます。', function() {
+          var area = document.getElementById('hInput');
+          if (!area) return;
+          area.innerHTML =
+            '<div class="hearing-cta">' +
+              '<button class="hearing-cta-yes" id="hCtaYes">初回無料でつくってみる →</button>' +
+              '<button class="hearing-cta-later" id="hCtaLater">もう少し検討する</button>' +
+            '</div>';
+          document.getElementById('hCtaYes').addEventListener('click', showEmailForm);
+          document.getElementById('hCtaLater').addEventListener('click', showLater);
+        });
+      }, 300);
+    }
+
+    function showEmailForm() {
+      addUserMessage('初回無料でつくってみる');
+      var area = document.getElementById('hInput');
+      if (area) area.innerHTML = '';
+      addBotMessage('ありがとうございます！<br>メールアドレスを教えていただければ、担当者よりご連絡します。', function() {
+        var area = document.getElementById('hInput');
+        if (!area) return;
+        area.innerHTML =
+          '<div class="hearing-email-row">' +
+            '<input type="email" class="hearing-text-input" id="hEmailInput" placeholder="your@email.com">' +
+            '<button class="hearing-send-btn" id="hEmailSend">↑</button>' +
+          '</div>';
+        var emailInput = document.getElementById('hEmailInput');
+        var emailSend = document.getElementById('hEmailSend');
+        emailSend.addEventListener('click', function() { submitEmail(); });
+        emailInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.isComposing) submitEmail();
+        });
+        emailInput.focus();
+      });
+    }
+
+    function submitEmail() {
+      var input = document.getElementById('hEmailInput');
+      var email = input ? input.value.trim() : '';
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#8b1a1a';
+        return;
+      }
+      addUserMessage(email);
+      var area = document.getElementById('hInput');
+      if (area) area.innerHTML = '';
+
+      // Formspreeに送信
+      var planKey = PLAN_MAP[answers.audience] || 'standard';
+      fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          _subject: '【業界紙つくーる】ヒアリング完了 — ' + answers.industry,
+          email: email,
+          業種: answers.industry,
+          目的: answers.purpose,
+          配信規模: answers.audience,
+          頻度: answers.frequency,
+          タイトル案: answers.title || '未定',
+          トーン: answers.tone,
+          おすすめプラン: PLAN_INFO[planKey].name,
+        }),
+      }).catch(function() {});
+
+      showDone();
+    }
+
+    function showDone() {
+      chat.innerHTML =
+        '<div class="hearing-done">' +
+          '<div class="hearing-done-icon" style="background:var(--gold);">🎉</div>' +
+          '<h3 class="hearing-done-title">ありがとうございます！</h3>' +
+          '<p class="hearing-done-text">担当者より2営業日以内にご連絡します。<br>初回号の制作を一緒に進めましょう。</p>' +
+        '</div>';
+    }
+
+    function showLater() {
+      addUserMessage('もう少し検討する');
+      var area = document.getElementById('hInput');
+      if (area) area.innerHTML = '';
+      chat.innerHTML =
+        '<div class="hearing-done">' +
+          '<div class="hearing-done-icon" style="background:rgba(244,237,224,0.1);">📋</div>' +
+          '<h3 class="hearing-done-title">ご検討ありがとうございます。</h3>' +
+          '<p class="hearing-done-text">いつでもお気軽にご相談ください。</p>' +
+          '<button class="hearing-restart-btn" id="hRestartBtn">最初からやり直す</button>' +
+        '</div>';
+      document.getElementById('hRestartBtn').addEventListener('click', init);
+    }
+
+    // 初期化
+    init();
+  })();
 </script>
 </body>
 </html>
