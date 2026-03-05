@@ -1396,34 +1396,31 @@ async function handleOnboarding(request, env, origin, ctx) {
   existing.fromName = senderName || '';
   existing.issueNumber = (existing.issueNumber || 0) + 1;
 
-  // Paulに通知（バックグラウンドで記事生成が始まることを通知）
+  // Paulに通知
   await sendOnboardingNotification(email, resendApiKey, senderName, sessionId, env);
 
-  // 記事生成→サンプルメール送信をバックグラウンドで実行
-  // （クライアントのブラウザにはすぐにOKを返す）
-  ctx.waitUntil((async () => {
-    try {
-      const articleHtml = await generateArticle(existing, env);
-      existing.articleHtml = articleHtml;
+  // 記事生成→サンプルメール送信（同期処理）
+  // web_search + Claude APIで30秒以上かかるため、waitUntilではタイムアウトする
+  try {
+    const articleHtml = await generateArticle(existing, env);
+    existing.articleHtml = articleHtml;
 
-      const token = crypto.randomUUID();
-      existing.approvalToken = token;
-      existing.tokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-      existing.status = 'pending_approval';
+    const token = crypto.randomUUID();
+    existing.approvalToken = token;
+    existing.tokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    existing.status = 'pending_approval';
 
-      await env.CLIENTS.put(kvKey, JSON.stringify(existing));
-      // トークン逆引きインデックス（7日間TTL）
-      await env.CLIENTS.put(`token:${token}`, email, { expirationTtl: 7 * 24 * 60 * 60 });
+    await env.CLIENTS.put(kvKey, JSON.stringify(existing));
+    // トークン逆引きインデックス（7日間TTL）
+    await env.CLIENTS.put(`token:${token}`, email, { expirationTtl: 7 * 24 * 60 * 60 });
 
-      await sendSampleEmail(existing, env);
-      console.log(`Article generated and sample sent for ${email} (issue #${existing.issueNumber})`);
-    } catch (err) {
-      console.error(`Article generation failed for ${email}: ${err.message}`);
-      // エラー時もKVを更新してステータスを記録
-      existing.status = 'onboarding';
-      await env.CLIENTS.put(kvKey, JSON.stringify(existing));
-    }
-  })());
+    await sendSampleEmail(existing, env);
+    console.log(`Article generated and sample sent for ${email} (issue #${existing.issueNumber})`);
+  } catch (err) {
+    console.error(`Article generation failed for ${email}: ${err.message}`);
+    existing.status = 'onboarding';
+    await env.CLIENTS.put(kvKey, JSON.stringify(existing));
+  }
 
   return json({ ok: true }, 200, origin);
 }
