@@ -504,7 +504,13 @@ async function generateArticle(clientData, env, revisionInstructions) {
 </div>
 
 ヘッダーで必ず生成する要素：
-1. メイン見出しコピー: その号の最重要トピックを新聞の一面見出しのように1〜2行で。最も重要な数字やキーワードを<em style="color:${theme.heroAccent};font-style:normal">で囲む（例: バブル超え。<em style="color:${theme.heroAccent};font-style:normal">7,122万円</em>が示す転換点。）
+1. メイン見出しコピー: その号の最重要トピックを新聞の一面見出しのように生成。最も重要な数字やキーワードを<em style="color:${theme.heroAccent};font-style:normal">で囲む。
+   改行ルール（厳守）:
+   - 数字・金額・%などのキーワードがある場合は文頭に配置する
+   - 1行は最大15文字以内
+   - 改行は<br>タグで明示的に入れる
+   - 良い例: <em style="color:${theme.heroAccent};font-style:normal">6兆円</em>。<br>過去最高が続く投資熱と<br>市場の転換点
+   - 悪い例: 過去最高が続く投資熱。6兆円市場の転換点
 2. リード文: 見出しを補足する2〜3文
 3. 統計3点: 記事中の最重要数字3つ（数値・単位・ラベル）を抽出して配置
 
@@ -545,19 +551,31 @@ async function generateArticle(clientData, env, revisionInstructions) {
 ### 5. ${theme.label}カレンダー
 - 今月の重要イベント・締切・季節情報を3〜5項目（web searchで取得した実イベント）
 - 日付は丸バッジで表示:
-  <div style="background:${theme.primary};color:white;border-radius:50%;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0">15</div>
+  <div style="background:${theme.primary};color:#ffffff;border-radius:50%;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">15</div>
 - 各イベントは日付バッジ＋テキストを横並び（display:flex; align-items:center; gap:12px）
 - イベント間は余白(margin-bottom:12px)で区切る
 
-### 6. 編集後記（100字以上）
-- 編集長の個人的な視点や今号のポイントを振り返る
-- 次号の予告も一言添える
-- 温かみのある人間味あるトーンで
+### 6. 編集後記（100字以内・3文のみ）
+- 1文目: この号で取り上げたテーマの総括
+- 2文目: もう1つの視点での総括
+- 3文目: 読者へのメッセージ（感謝・応援など）
+- 合計3文・100字以内に収める
+- 禁止表現: 「次号では〜」「今後は〜」「次回は〜」「来月は〜」など次号予告は一切禁止
+
+### 6.5. 読者CTA（編集後記の直後に必ず配置）
+以下のHTMLをそのまま出力すること:
+<div style="background:#f8f5f0;border-left:3px solid ${theme.heroAccent};padding:16px 20px;font-size:13px;color:#555;line-height:1.6;margin:0 24px 32px">
+  ご感想・ご意見は返信でお送りください。お読みいただいた皆様の声が次号の力になります。
+</div>
 
 ### 7. フッター
-- 配信元情報のプレースホルダー:「このメールは[会社名]よりお届けしています」
-- 配信停止リンクのプレースホルダー:「配信停止はこちら」（リンクは # で仮置き）
-- Copyright表記
+以下のHTMLをそのまま出力すること（変数部分のみ置換）:
+<div style="text-align:center;padding:32px 48px;border-top:1px solid #e8e8e8;font-size:11px;color:#999;font-family:'Helvetica Neue',sans-serif;line-height:2">
+  本メールは ${clientData.fromName || titleText} よりお届けしています<br>
+  ご不明な点は <a href="mailto:${clientData.email}" style="color:#999">${clientData.email}</a> までご連絡ください<br>
+  <a href="#" style="color:#bbb">配信停止はこちら</a><br>
+  © ${new Date().getFullYear()} ${clientData.fromName || titleText} All rights reserved.
+</div>
 
 ## デザイン指針
 - max-width: 600px; margin: 0 auto
@@ -598,9 +616,13 @@ async function generateArticle(clientData, env, revisionInstructions) {
 
 ## ヘッダーの生成ルール（最重要）
 ヘッダーはOption C（フルブリード・エディトリアル見出し）形式で必ず以下を生成：
-1. メイン見出しコピー: その号の最重要トピックを新聞の一面見出しのように1〜2行で生成。
-   最も重要な数字やキーワードを<em style="color:${theme.heroAccent};font-style:normal">で囲む。
-   例: 「バブル超え。<em style="color:${theme.heroAccent};font-style:normal">7,122万円</em>が示す転換点。」
+1. メイン見出しコピー: 最重要トピックを新聞の一面見出しのように生成。
+   - 数字・金額・%などのキーワードは文頭に配置
+   - 1行は最大15文字以内
+   - 改行は<br>タグで明示的に入れる
+   - 最も重要な数字やキーワードを<em style="color:${theme.heroAccent};font-style:normal">で囲む
+   - 良い例: <em style="color:${theme.heroAccent};font-style:normal">6兆円</em>。<br>過去最高が続く投資熱と<br>市場の転換点
+   - 悪い例: 過去最高が続く投資熱。6兆円市場の転換点
 2. リード文: 見出しを補足する2〜3文（13px、半透明白文字）
 3. 統計3点: 記事中の最重要数字3つを抽出し、数値（24px白太字）+ ラベル（10px薄白）の形式で横並び配置
 カラー: 背景=${theme.heroBg}、アクセント=${theme.heroAccent}
@@ -623,8 +645,8 @@ async function generateArticle(clientData, env, revisionInstructions) {
 前年比の色: 上昇→color:#27ae60（緑）+ ↑、下降→color:#e74c3c（赤）+ ↓
 
 ## カレンダーセクションの日付バッジ
-日付は以下の丸バッジで表示：
-<div style="background:${theme.primary};color:white;border-radius:50%;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0">日</div>
+日付は以下の丸バッジで表示（白文字・太字で視認性を確保）：
+<div style="background:${theme.primary};color:#ffffff;border-radius:50%;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">日</div>
 各イベントは日付バッジ＋テキストを横並びで表示。${revisionInstructions ? `
 
 ## 【修正指示】以下のフィードバックを必ず反映してください:
