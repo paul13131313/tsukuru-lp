@@ -1,775 +1,1465 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>業界紙つくーる | AIであなたの業界専門メディアをつくろう</title>
-  <meta name="description" content="業界紙つくーる - AIが毎日、あなたの業界に特化したニュースレターを自動生成。専門メディアを手間なく運営。">
-  <meta property="og:title" content="業界紙つくーる | AIであなたの業界専門メディアをつくろう">
-  <meta property="og:description" content="AIが毎日、あなたの業界に特化したニュースレターを自動生成。専門メディアを手間なく運営。">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://paul13131313.github.io/tsukuru-lp/">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary: #1a1a2e;
-      --accent: #e94560;
-      --accent-light: #ff6b81;
-      --bg: #f8f9fa;
-      --text: #1a1a2e;
-      --text-light: #6c757d;
-      --white: #ffffff;
-      --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Noto Sans JP', 'Inter', sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.8;
-      overflow-x: hidden;
-    }
-
-    /* ─── Hero ─── */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      color: var(--white);
-      padding: 2rem;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 20% 50%, rgba(233, 69, 96, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 50%, rgba(15, 52, 96, 0.3) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      background: rgba(233, 69, 96, 0.2);
-      border: 1px solid rgba(233, 69, 96, 0.4);
-      color: var(--accent-light);
-      padding: 0.4rem 1.2rem;
-      border-radius: 100px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.05em;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero h1 span {
-      background: linear-gradient(90deg, var(--accent), var(--accent-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero p {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 2.5rem;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--accent);
-      color: var(--white);
-      padding: 1rem 2.5rem;
-      border-radius: 100px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
-    }
-
-    .hero-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(233, 69, 96, 0.5);
-    }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.8rem;
-      text-align: center;
-      animation: bounce 2s infinite;
-    }
-
-    .hero-scroll::after {
-      content: '';
-      display: block;
-      width: 1px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.2);
-      margin: 0.5rem auto 0;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-8px); }
-    }
-
-    /* ─── Section Common ─── */
-    section {
-      padding: 6rem 2rem;
-    }
-
-    .section-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .section-title h2 {
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 900;
-      margin-bottom: 1rem;
-    }
-
-    .section-title p {
-      color: var(--text-light);
-      font-size: 1.05rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* ─── Problem ─── */
-    .problem {
-      background: var(--white);
-    }
-
-    .problem-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-
-    .problem-card {
-      background: var(--bg);
-      border-radius: 16px;
-      padding: 2rem;
-      text-align: center;
-      border: 1px solid #e9ecef;
-    }
-
-    .problem-card .emoji {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .problem-card h3 {
-      font-size: 1.15rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .problem-card p {
-      color: var(--text-light);
-      font-size: 0.95rem;
-    }
-
-    /* ─── How It Works ─── */
-    .how {
-      background: var(--bg);
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      counter-reset: step;
-    }
-
-    .step {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 2.5rem 2rem;
-      text-align: center;
-      box-shadow: var(--card-shadow);
-      position: relative;
-      counter-increment: step;
-    }
-
-    .step::before {
-      content: counter(step);
-      position: absolute;
-      top: -1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 2.5rem;
-      height: 2.5rem;
-      background: var(--accent);
-      color: var(--white);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .step .emoji {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
-    }
-
-    .step h3 {
-      font-size: 1.15rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .step p {
-      color: var(--text-light);
-      font-size: 0.95rem;
-    }
-
-    /* ─── Features ─── */
-    .features {
-      background: var(--white);
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      padding: 2rem;
-      border-radius: 16px;
-      border: 1px solid #e9ecef;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--card-shadow);
-    }
-
-    .feature-card .emoji {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .feature-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .feature-card p {
-      color: var(--text-light);
-      font-size: 0.95rem;
-    }
-
-    /* ─── Use Cases ─── */
-    .usecases {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      color: var(--white);
-    }
-
-    .usecases .section-title p {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .usecase-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .usecase-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 2rem;
-    }
-
-    .usecase-card .emoji {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .usecase-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      color: var(--accent-light);
-    }
-
-    .usecase-card p {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.95rem;
-    }
-
-    /* ─── Pricing ─── */
-    .pricing {
-      background: var(--bg);
-    }
-
-    .pricing-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .pricing-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 2.5rem;
-      text-align: center;
-      box-shadow: var(--card-shadow);
-      position: relative;
-      border: 2px solid transparent;
-    }
-
-    .pricing-card.featured {
-      border-color: var(--accent);
-    }
-
-    .pricing-card.featured::before {
-      content: 'おすすめ';
-      position: absolute;
-      top: -0.8rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: var(--white);
-      padding: 0.2rem 1rem;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .pricing-card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .pricing-card .price {
-      font-size: 2.5rem;
-      font-weight: 900;
-      margin: 1rem 0;
-    }
-
-    .pricing-card .price small {
-      font-size: 1rem;
-      font-weight: 400;
-      color: var(--text-light);
-    }
-
-    .pricing-card ul {
-      list-style: none;
-      text-align: left;
-      margin: 1.5rem 0;
-    }
-
-    .pricing-card li {
-      padding: 0.4rem 0;
-      font-size: 0.95rem;
-      color: var(--text-light);
-    }
-
-    .pricing-card li::before {
-      content: '✓ ';
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    .pricing-cta {
-      display: inline-block;
-      width: 100%;
-      padding: 0.9rem;
-      border-radius: 100px;
-      font-size: 1rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .pricing-cta.primary {
-      background: var(--accent);
-      color: var(--white);
-      box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
-    }
-
-    .pricing-cta.secondary {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid #dee2e6;
-    }
-
-    .pricing-cta:hover {
-      transform: translateY(-2px);
-    }
-
-    /* ─── CTA / Form ─── */
-    .cta-section {
-      background: var(--white);
-      text-align: center;
-    }
-
-    .cta-section h2 {
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 900;
-      margin-bottom: 1rem;
-    }
-
-    .cta-section > .section-inner > p {
-      color: var(--text-light);
-      margin-bottom: 2.5rem;
-      font-size: 1.05rem;
-    }
-
-    .contact-form {
-      max-width: 500px;
-      margin: 0 auto;
-      text-align: left;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: inherit;
-      background: var(--bg);
-      transition: border-color 0.2s;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .form-submit {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      background: var(--accent);
-      color: var(--white);
-      border: none;
-      border-radius: 100px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
-    }
-
-    .form-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
-    }
-
-    /* ─── Footer ─── */
-    footer {
-      background: var(--primary);
-      color: rgba(255, 255, 255, 0.5);
-      text-align: center;
-      padding: 2rem;
-      font-size: 0.85rem;
-    }
-
-    /* ─── Responsive ─── */
-    @media (max-width: 768px) {
-      section {
-        padding: 4rem 1.5rem;
-      }
-
-      .hero {
-        padding: 2rem 1.5rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>業界紙つくーる — AI生成×プロデザインの業界紙・メルマガ制作配信代行</title>
+<meta name="description" content="AIが書いて、あなたが届ける。業界紙・メルマガの制作から配信まで、月額19,800円からまるごとお任せ。">
+<meta property="og:title" content="業界紙つくーる">
+<meta property="og:description" content="AIが書いて、あなたが届ける。業界紙・メルマガの制作から配信まで、月額19,800円から。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ===== VARIABLES ===== */
+  :root {
+    --ink: #1c1814;
+    --paper: #f4ede0;
+    --paper-dark: #e8dece;
+    --gold: #b8924a;
+    --gold-light: #d4b07a;
+    --red: #8b1a1a;
+    --gray: #6b6058;
+    --gray-light: #9b9088;
+    --white: #fdfaf5;
+    --border: rgba(28,24,20,0.15);
+  }
+
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ===== NOISE TEXTURE OVERLAY ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px;
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  h1, h2, h3, h4 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .serif { font-family: 'Noto Serif JP', serif; }
+  .cormorant { font-family: 'Cormorant Garamond', serif; }
+
+  /* ===== LAYOUT ===== */
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .container--narrow { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes lineGrow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .delay-1 { animation-delay: 0.15s; }
+  .delay-2 { animation-delay: 0.3s; }
+  .delay-3 { animation-delay: 0.45s; }
+  .delay-4 { animation-delay: 0.6s; }
+
+  /* ===== HEADER / NAV ===== */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(244,237,224,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    font-style: italic;
+    display: block;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.8rem;
+    color: var(--gray);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .btn-nav {
+    background: var(--ink);
+    color: var(--paper) !important;
+    padding: 8px 20px;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.08em;
+    transition: background 0.2s !important;
+  }
+  .btn-nav:hover { background: var(--red) !important; color: var(--paper) !important; }
+
+  /* ===== DIVIDER ===== */
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .rule::before, .rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .rule-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -80px; top: 50%;
+    transform: translateY(-50%);
+    width: 520px; height: 520px;
+    background: radial-gradient(ellipse, rgba(184,146,74,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    width: 100%;
+  }
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    margin-bottom: 28px;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--red);
+  }
+  .hero-sub {
+    font-size: 0.95rem;
+    color: var(--gray);
+    line-height: 1.9;
+    margin-bottom: 40px;
+    max-width: 460px;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--red);
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 13px 28px;
+  }
+  .btn-secondary:hover {
+    border-color: var(--ink);
+    background: rgba(28,24,20,0.04);
+  }
+  .btn-arrow::after { content: ' →'; }
+
+  /* ===== NEWSPAPER MOCKUP ===== */
+  .newspaper-mockup {
+    position: relative;
+  }
+  .newspaper-frame {
+    background: var(--white);
+    border: 1px solid var(--border);
+    box-shadow:
+      4px 4px 0 var(--paper-dark),
+      8px 8px 0 rgba(28,24,20,0.06),
+      16px 16px 40px rgba(28,24,20,0.15);
+    padding: 28px;
+    font-family: 'Noto Serif JP', serif;
+    position: relative;
+    transform: rotate(-1.5deg);
+    transition: transform 0.4s;
+  }
+  .newspaper-frame:hover { transform: rotate(0deg); }
+  .np-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gray-light);
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .np-nameplate {
+    text-align: center;
+    padding: 8px 0 10px;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 12px;
+  }
+  .np-nameplate h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .np-nameplate p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+  .np-columns {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  .np-headline {
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    border-left: 3px solid var(--red);
+    padding-left: 8px;
+  }
+  .np-body-mock {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .np-line {
+    height: 6px;
+    background: var(--paper-dark);
+    border-radius: 2px;
+  }
+  .np-line--short { width: 60%; }
+  .np-line--med { width: 80%; }
+  .np-sidebar {
+    border-left: 1px solid var(--border);
+    padding-left: 10px;
+  }
+  .np-sidebar-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .np-data-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+  }
+  .np-data-num {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .np-data-label {
+    font-size: 0.55rem;
+    color: var(--gray-light);
+    letter-spacing: 0.05em;
+  }
+  .np-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .np-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--gray-light);
+    text-transform: uppercase;
+  }
+  .np-ai-badge {
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    padding: 2px 6px;
+    text-transform: uppercase;
+  }
+
+  /* ===== SECTION BASE ===== */
+  .section {
+    padding: 120px 0;
+  }
+  .section--dark {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .section--mid {
+    background: var(--paper-dark);
+  }
+  .section-head {
+    margin-bottom: 72px;
+  }
+  .section-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+  .section-subtitle {
+    font-size: 0.9rem;
+    color: var(--gray);
+    max-width: 560px;
+  }
+  .section--dark .section-subtitle { color: rgba(244,237,224,0.6); }
+
+  /* ===== PROBLEMS ===== */
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .problem-item {
+    background: var(--paper);
+    padding: 40px;
+    position: relative;
+  }
+  .problem-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    display: block;
+    filter: grayscale(1);
+    opacity: 0.5;
+  }
+  .problem-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .problem-sub {
+    font-size: 0.8rem;
+    color: var(--gray);
+  }
+  .problem-solved {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 24px; height: 24px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.7rem;
+  }
+
+  /* ===== STEPS ===== */
+  .steps-list {
+    position: relative;
+    counter-reset: step;
+  }
+  .step-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 32px;
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+    counter-increment: step;
+    position: relative;
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+    text-align: center;
+    padding-top: 4px;
+  }
+  .step-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  .step-content p {
+    font-size: 0.88rem;
+    color: var(--gray);
+    max-width: 560px;
+  }
+  .step-tag {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-light);
+    padding: 2px 8px;
+    margin-bottom: 10px;
+  }
+
+  /* ===== SAMPLES ===== */
+  .sample-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.82rem;
+    color: var(--gray);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--red);
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .sample-panels { position: relative; }
+  .sample-panel { display: none; }
+  .sample-panel.active { display: block; }
+  .sample-preview {
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 40px;
+    box-shadow: 0 8px 40px rgba(28,24,20,0.12);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .sample-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  .sample-masthead {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .sample-meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    text-align: right;
+    line-height: 1.6;
+  }
+  .sample-lead-headline {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--red);
+    padding-left: 12px;
+  }
+  .sample-lead-text {
+    font-size: 0.8rem;
+    line-height: 1.9;
+    color: var(--gray);
+    margin-bottom: 20px;
+  }
+  .sample-columns-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+  .sample-col h4 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sample-col p {
+    font-size: 0.72rem;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+  .sample-col .data-highlight {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Noto Serif JP', serif;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .sample-label-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gray-light);
+  }
+
+  /* ===== PRICING ===== */
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .price-card {
+    background: var(--paper);
+    padding: 48px 36px;
+    position: relative;
+  }
+  .price-card--featured {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .price-badge {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--red);
+    color: white;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    white-space: nowrap;
+  }
+  .price-plan-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .price-initial {
+    font-family: 'Noto Serif JP', serif;
+    margin-bottom: 6px;
+  }
+  .price-initial .label {
+    font-size: 0.7rem;
+    color: var(--gray-light);
+    letter-spacing: 0.05em;
+  }
+  .price-card--featured .price-initial .label { color: rgba(244,237,224,0.5); }
+  .price-initial .amount {
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: block;
+    line-height: 1.2;
+  }
+  .price-monthly {
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 20px 0 24px;
+  }
+  .price-card--featured .price-monthly {
+    border-color: rgba(244,237,224,0.2);
+  }
+  .price-monthly .label {
+    font-size: 0.68rem;
+    color: var(--gray-light);
+    letter-spacing: 0.05em;
+  }
+  .price-card--featured .price-monthly .label { color: rgba(244,237,224,0.5); }
+  .price-monthly .amount {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .price-monthly .amount .unit {
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+  .price-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .price-features li {
+    font-size: 0.78rem;
+    color: var(--gray);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .price-card--featured .price-features li { color: rgba(244,237,224,0.75); }
+  .price-features li::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .btn-price {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.82rem;
+    padding: 14px 24px;
+  }
+  .btn-price-light {
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid rgba(244,237,224,0.3);
+  }
+  .btn-price-light:hover {
+    background: var(--paper-dark);
+  }
+  .btn-price-dark {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .btn-price-dark:hover {
+    background: var(--paper-dark);
+  }
+
+  /* ===== FAQ ===== */
+  .faq-list { max-width: 720px; margin: 0 auto; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    cursor: pointer;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    gap: 16px;
+    user-select: none;
+  }
+  .faq-q:hover { color: var(--red); }
+  .faq-toggle {
+    width: 24px; height: 24px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.2s;
+    font-style: normal;
+  }
+  .faq-item.open .faq-toggle {
+    transform: rotate(45deg);
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .faq-item.open .faq-a { max-height: 200px; }
+  .faq-a-inner {
+    padding: 0 0 24px;
+    font-size: 0.85rem;
+    color: var(--gray);
+    line-height: 1.9;
+  }
+
+  /* ===== CONTACT ===== */
+  .contact-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .contact-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 16px;
+  }
+  .contact-sub {
+    font-size: 0.88rem;
+    color: rgba(244,237,224,0.65);
+    margin-bottom: 48px;
+    line-height: 2;
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: rgba(244,237,224,0.6);
+  }
+  .form-label .req {
+    color: var(--gold);
+    margin-left: 4px;
+  }
+  .form-input, .form-select, .form-textarea {
+    background: rgba(244,237,224,0.06);
+    border: 1px solid rgba(244,237,224,0.2);
+    color: var(--paper);
+    padding: 12px 16px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--gold-light);
+  }
+  .form-select option { background: var(--ink); color: var(--paper); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .btn-submit {
+    width: 100%;
+    justify-content: center;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 18px;
+    margin-top: 8px;
+  }
+  .btn-submit:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+  }
+  .form-note {
+    font-size: 0.72rem;
+    color: rgba(244,237,224,0.4);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: #111;
+    color: rgba(244,237,224,0.5);
+    padding: 48px 0 32px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .footer-brand h4 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    color: rgba(244,237,224,0.8);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+  .footer-brand p {
+    font-size: 0.75rem;
+    line-height: 1.7;
+    max-width: 280px;
+  }
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-links a {
+    font-size: 0.75rem;
+    color: rgba(244,237,224,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: rgba(244,237,224,0.8); }
+  .footer-copy {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 24px;
+    font-size: 0.7rem;
+    color: rgba(244,237,224,0.3);
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+    .newspaper-frame { transform: none; }
+    .problems-grid { grid-template-columns: 1fr; }
+    .price-grid { grid-template-columns: 1fr; }
+    .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
+    .form-row { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; }
+    .container { padding: 0 20px; }
+    .section { padding: 80px 0; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-badge">AI x 業界特化メディア</div>
-      <h1>あなたの業界の<br><span>専門紙</span>をつくろう</h1>
-      <p>AIが毎日、あなたの業界に特化したニュースを自動で収集・編集。専門メディアを手間なく立ち上げ、業界内でのプレゼンスを確立します。</p>
-      <a href="#contact" class="hero-cta">無料で相談する →</a>
-    </div>
-    <div class="hero-scroll">Scroll</div>
-  </section>
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    業界紙つくーる
+    <span>AI-Powered Industry Newsletter</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#service">サービスとは</a></li>
+    <li><a href="#sample">サンプル</a></li>
+    <li><a href="#price">料金</a></li>
+    <li><a href="#contact" class="btn-nav">無料相談する</a></li>
+  </ul>
+</nav>
 
-  <!-- Problem -->
-  <section class="problem">
-    <div class="section-inner">
-      <div class="section-title">
-        <h2>こんなお悩みありませんか？</h2>
-      </div>
-      <div class="problem-grid">
-        <div class="problem-card">
-          <div class="emoji">📰</div>
-          <h3>業界の情報が散らばっている</h3>
-          <p>ニュースサイト、SNS、業界団体...情報源が多すぎて追いきれない。毎朝のチェックだけで時間が消える。</p>
-        </div>
-        <div class="problem-card">
-          <div class="emoji">🏢</div>
-          <h3>自社メディアを持ちたいけど<br>リソースがない</h3>
-          <p>オウンドメディアは始めたい。でも編集者を雇う予算も、毎日記事を書く時間もない。</p>
-        </div>
-        <div class="problem-card">
-          <div class="emoji">🎯</div>
-          <h3>業界内での存在感を<br>高めたい</h3>
-          <p>専門性のある情報発信で信頼を積み上げたいが、コンテンツを継続的に出し続けるのは大変。</p>
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="hero-eyebrow fade-up">Industry Newsletter Service</p>
+        <h1 class="hero-title fade-up delay-1">
+          あなたの業界の「声」を、<br>
+          毎週、<em>届ける。</em>
+        </h1>
+        <p class="hero-sub fade-up delay-2">
+          AIが書いて、プロがデザインして、あなたが配信する。<br>
+          業界紙・メルマガの制作から配信まで、<br>
+          月額19,800円からまるごとお任せ。
+        </p>
+        <div class="hero-cta fade-up delay-3">
+          <a href="#contact" class="btn btn-primary btn-arrow">まず無料相談する</a>
+          <a href="#sample" class="btn btn-secondary">サンプルを見る</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- How It Works -->
-  <section class="how">
-    <div class="section-inner">
-      <div class="section-title">
-        <h2>3ステップで業界紙が完成</h2>
-        <p>難しい設定は一切不要。あなたの業界を教えるだけで、AI編集部が動き出します。</p>
-      </div>
-      <div class="steps">
-        <div class="step">
-          <div class="emoji">💬</div>
-          <h3>業界・テーマを伝える</h3>
-          <p>「不動産テック」「飲食業界」「地方自治体DX」など、カバーしたい領域を教えてください。</p>
-        </div>
-        <div class="step">
-          <div class="emoji">🤖</div>
-          <h3>AIが毎日ニュースを編集</h3>
-          <p>業界に関連するニュースを自動収集し、要約・分類・コメントを付けて紙面を構成します。</p>
-        </div>
-        <div class="step">
-          <div class="emoji">🚀</div>
-          <h3>あなたのメディアとして配信</h3>
-          <p>Webサイト・メールニュースレター・SNSなど、好きなチャネルで業界紙を届けられます。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="features">
-    <div class="section-inner">
-      <div class="section-title">
-        <h2>業界紙つくーるの特長</h2>
-        <p>AIの力で、プロの編集部と同等のクオリティを実現します。</p>
-      </div>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="emoji">🔍</div>
-          <h3>業界特化の情報収集</h3>
-          <p>ニュースサイト、RSS、SNS、業界団体の発表など、多様なソースからAIが自動収集。ノイズを除去し、本当に重要なニュースだけをピックアップ。</p>
-        </div>
-        <div class="feature-card">
-          <div class="emoji">✍️</div>
-          <h3>プロ品質の記事生成</h3>
-          <p>ただの要約ではありません。業界の文脈を理解したAIが、読者に価値ある解説やインサイトを付加した記事を生成します。</p>
-        </div>
-        <div class="feature-card">
-          <div class="emoji">🎨</div>
-          <h3>ブランドに合わせたデザイン</h3>
-          <p>あなたの企業・サービスのブランドカラーやロゴに合わせた紙面デザイン。読者に一貫したブランド体験を提供。</p>
-        </div>
-        <div class="feature-card">
-          <div class="emoji">📊</div>
-          <h3>データ＆トレンド分析</h3>
-          <p>株価・市場データ・SNSトレンドなどのリアルタイムデータも紙面に自動統合。数字で業界の「今」を伝えます。</p>
-        </div>
-        <div class="feature-card">
-          <div class="emoji">📧</div>
-          <h3>マルチチャネル配信</h3>
-          <p>Webサイト掲載、メールニュースレター、LINE配信、SNS自動投稿など、読者に届く最適なチャネルで配信。</p>
-        </div>
-        <div class="feature-card">
-          <div class="emoji">📈</div>
-          <h3>読者分析ダッシュボード</h3>
-          <p>どの記事が読まれているか、どのテーマに関心が高いかを可視化。データに基づいたコンテンツ改善が可能。</p>
+      <div class="newspaper-mockup fade-up delay-2">
+        <div class="newspaper-frame">
+          <div class="np-date">
+            <span>VOL. 127 — 2026 MARCH</span>
+            <span>POWERED BY AI</span>
+          </div>
+          <div class="np-nameplate">
+            <h3>不動産マーケット通信</h3>
+            <p>REAL ESTATE MARKET NEWSLETTER</p>
+          </div>
+          <div class="np-columns">
+            <div>
+              <p class="np-headline">都心3区の空室率が<br>0.3%低下、賃料上昇基調続く</p>
+              <div class="np-body-mock">
+                <div class="np-line"></div>
+                <div class="np-line np-line--med"></div>
+                <div class="np-line"></div>
+                <div class="np-line np-line--short"></div>
+                <div class="np-line np-line--med"></div>
+                <div class="np-line"></div>
+              </div>
+            </div>
+            <div class="np-sidebar">
+              <p class="np-sidebar-label">今週の数字</p>
+              <div class="np-data-item">
+                <span class="np-data-num">2.1%</span>
+                <span class="np-data-label">空室率（前月比）</span>
+              </div>
+              <div class="np-data-item">
+                <span class="np-data-num">+3.4%</span>
+                <span class="np-data-label">賃料指数（前年比）</span>
+              </div>
+              <div class="np-data-item">
+                <span class="np-data-num">1,240</span>
+                <span class="np-data-label">新規成約件数</span>
+              </div>
+            </div>
+          </div>
+          <div class="np-footer">
+            <span class="np-tag">毎週月曜配信</span>
+            <span class="np-ai-badge">AI Generated</span>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Use Cases -->
-  <section class="usecases">
-    <div class="section-inner">
-      <div class="section-title">
-        <h2>活用シーン</h2>
-        <p>あらゆる業界・目的で、専門メディアの力を活用できます。</p>
+<!-- ===== PROBLEMS ===== -->
+<section class="section" id="service">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">The Problem</span>
+      <h2 class="section-title">メルマガ、続かない理由、<br>わかってます。</h2>
+      <p class="section-subtitle">「やりたい」と思っても、実際に続けている事業者は5%以下。</p>
+    </div>
+    <div class="problems-grid">
+      <div class="problem-item reveal">
+        <div class="problem-solved">✓</div>
+        <span class="problem-icon">⏱</span>
+        <p class="problem-text">「書く時間がない」</p>
+        <p class="problem-sub">毎号のコンテンツ収集・執筆がボトルネックに。本業が忙しいほど後回しになる。</p>
       </div>
-      <div class="usecase-grid">
-        <div class="usecase-card">
-          <div class="emoji">🏗️</div>
-          <h3>業界団体の広報誌として</h3>
-          <p>会員向けに業界ニュースを毎日配信。団体の存在価値を高め、会員エンゲージメントを向上。</p>
+      <div class="problem-item reveal">
+        <div class="problem-solved">✓</div>
+        <span class="problem-icon">✍️</span>
+        <p class="problem-text">「何を書けばいいかわからない」</p>
+        <p class="problem-sub">ネタ切れ・マンネリ化で配信が止まる。読者が求める情報を選ぶのが難しい。</p>
+      </div>
+      <div class="problem-item reveal">
+        <div class="problem-solved">✓</div>
+        <span class="problem-icon">🎨</span>
+        <p class="problem-text">「デザインが素人っぽくなる」</p>
+        <p class="problem-sub">HTMLメールのデザインは難しく、テキストだけでは読まれにくい。</p>
+      </div>
+      <div class="problem-item reveal">
+        <div class="problem-solved">✓</div>
+        <span class="problem-icon">⚙️</span>
+        <p class="problem-text">「仕組みをつくるのが大変」</p>
+        <p class="problem-sub">配信システムの構築・リスト管理・到達率改善…立ち上げるだけで挫折する。</p>
+      </div>
+    </div>
+    <div style="margin-top: 48px; text-align: center;" class="reveal">
+      <p style="font-family: 'Noto Serif JP', serif; font-size: 1.1rem; color: var(--gray);">
+        業界紙つくーるは、<strong style="color: var(--ink);">この4つをまるごと解決します。</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STEPS ===== -->
+<section class="section section--mid">
+  <div class="container--narrow">
+    <div class="section-head reveal">
+      <span class="section-label">How it works</span>
+      <h2 class="section-title">3ステップで、<br>業界紙がスタートする。</h2>
+    </div>
+    <div class="steps-list">
+      <div class="step-item reveal">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <span class="step-tag">Week 1</span>
+          <h3>ヒアリング（30分）</h3>
+          <p>業種・顧客層・配信目的・トーンを丁寧にヒアリング。テンプレートの方向性を決定します。Zoomでも電話でもOKです。</p>
         </div>
-        <div class="usecase-card">
-          <div class="emoji">💼</div>
-          <h3>企業のオウンドメディアとして</h3>
-          <p>自社の専門領域に関するメディアを運営。リード獲得とブランディングを同時に実現。</p>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <span class="step-tag">Week 2–3</span>
+          <h3>デザイン制作</h3>
+          <p>オリジナルフォーマットを制作し、初稿をご確認いただきます。配信リストの設定サポートも含みます。修正は2回まで対応。</p>
         </div>
-        <div class="usecase-card">
-          <div class="emoji">🎓</div>
-          <h3>社内報・ナレッジ共有として</h3>
-          <p>業界動向を社内に自動配信。営業チームの商談力向上、経営陣の意思決定をサポート。</p>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <span class="step-tag">Monthly</span>
+          <h3>自動生成 → 確認 → 配信</h3>
+          <p>AIが業界ニュースを収集・執筆。お客様が内容を確認（15分程度）し、承認後に自動配信されます。あとは読者の反応を楽しむだけ。</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Pricing -->
-  <section class="pricing">
-    <div class="section-inner">
-      <div class="section-title">
-        <h2>料金プラン</h2>
-        <p>まずはスタータープランで効果を実感してください。</p>
+<!-- ===== SAMPLES ===== -->
+<section class="section" id="sample">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">Samples</span>
+      <h2 class="section-title">実際の業界紙を、<br>見てみてください。</h2>
+      <p class="section-subtitle">業種ごとに最適化されたフォーマットでお届けします。</p>
+    </div>
+    <div class="reveal">
+      <div class="sample-tabs">
+        <button class="tab-btn active" data-tab="fudosan">不動産業版</button>
+        <button class="tab-btn" data-tab="shigyou">士業版</button>
+        <button class="tab-btn" data-tab="seizou">製造業版</button>
       </div>
-      <div class="pricing-cards">
-        <div class="pricing-card">
-          <h3>スターター</h3>
-          <div class="price">¥29,800<small>/月</small></div>
-          <ul>
-            <li>1業界テーマ</li>
-            <li>毎日自動更新</li>
-            <li>Webサイト掲載</li>
-            <li>基本デザインテンプレート</li>
-            <li>月次レポート</li>
-          </ul>
-          <a href="#contact" class="pricing-cta secondary">お問い合わせ</a>
+      <div class="sample-panels">
+
+        <!-- 不動産 -->
+        <div class="sample-panel active" id="tab-fudosan">
+          <div class="sample-preview">
+            <div class="sample-header-row">
+              <div>
+                <div class="sample-masthead">不動産マーケット通信</div>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--gray); margin-top: 2px;">REAL ESTATE MARKET NEWSLETTER</div>
+              </div>
+              <div class="sample-meta">
+                Vol.127 / 2026年3月3日<br>
+                発行：株式会社〇〇不動産
+              </div>
+            </div>
+            <p class="sample-lead-headline">都心3区の空室率が0.3%低下、賃料上昇基調が続く</p>
+            <p class="sample-lead-text">国土交通省が発表した2月の不動産市場動向によると、東京都心3区（千代田・中央・港）の事業用オフィスの空室率が前月比0.3ポイント低下し、2.1%となった。テレワーク定着後の揺り戻しと、外資系企業の拠点拡充需要が重なり、特に大手町・丸の内エリアでの引き合いが強まっている……</p>
+            <div class="sample-columns-2">
+              <div class="sample-col">
+                <h4>▍今週の数字</h4>
+                <span class="data-highlight">+3.4%</span>
+                <p>都心賃料指数（前年同月比）。5ヶ月連続の上昇となり、コロナ前水準を上回った。</p>
+              </div>
+              <div class="sample-col">
+                <h4>▍編集後記</h4>
+                <p>今週は金利動向と不動産の関係を特集しました。次号は「相続と不動産」をテーマに取り上げる予定です。ご意見・ご感想はこちらまで。</p>
+              </div>
+            </div>
+            <p class="sample-label-bottom">— AI Generated & Human Supervised —</p>
+          </div>
         </div>
-        <div class="pricing-card featured">
-          <h3>プロフェッショナル</h3>
-          <div class="price">¥98,000<small>/月</small></div>
-          <ul>
-            <li>3業界テーマまで</li>
-            <li>毎日自動更新（朝刊・夕刊）</li>
-            <li>Web + メールニュースレター</li>
-            <li>カスタムデザイン</li>
-            <li>読者分析ダッシュボード</li>
-            <li>優先サポート</li>
-          </ul>
-          <a href="#contact" class="pricing-cta primary">お問い合わせ</a>
+
+        <!-- 士業 -->
+        <div class="sample-panel" id="tab-shigyou">
+          <div class="sample-preview">
+            <div class="sample-header-row">
+              <div>
+                <div class="sample-masthead">税務・労務インサイト</div>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--gray); margin-top: 2px;">TAX & LABOR LAW NEWSLETTER</div>
+              </div>
+              <div class="sample-meta">
+                Vol.043 / 2026年3月1日<br>
+                発行：〇〇税理士事務所
+              </div>
+            </div>
+            <p class="sample-lead-headline">2026年度税制改正大綱：中小企業オーナーが今すぐ確認すべき5点</p>
+            <p class="sample-lead-text">先月末に公表された令和8年度税制改正大綱では、中小企業に影響の大きい項目が複数含まれています。特に事業承継税制の要件緩和と、電子帳簿保存法の宥恕措置終了については、早急な対応が求められます。本号では実務上の影響を整理しました……</p>
+            <div class="sample-columns-2">
+              <div class="sample-col">
+                <h4>▍重要スケジュール</h4>
+                <p><strong>3月15日</strong>：確定申告期限<br><strong>3月31日</strong>：消費税申告期限<br><strong>4月1日</strong>：改正電帳法 完全施行</p>
+              </div>
+              <div class="sample-col">
+                <h4>▍ご相談はお気軽に</h4>
+                <p>本ニュースレターの内容に関するご質問、また個別のご相談はいつでも受け付けております。初回相談は無料です。</p>
+              </div>
+            </div>
+            <p class="sample-label-bottom">— AI Generated & Human Supervised —</p>
+          </div>
+        </div>
+
+        <!-- 製造業 -->
+        <div class="sample-panel" id="tab-seizou">
+          <div class="sample-preview">
+            <div class="sample-header-row">
+              <div>
+                <div class="sample-masthead">製造業マーケット便り</div>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--gray); margin-top: 2px;">MANUFACTURING MARKET NEWSLETTER</div>
+              </div>
+              <div class="sample-meta">
+                Vol.089 / 2026年3月2日<br>
+                発行：〇〇商事株式会社
+              </div>
+            </div>
+            <p class="sample-lead-headline">銅・アルミ相場が2週連続で反発——原材料調達タイミングを考える</p>
+            <p class="sample-lead-text">LMEにおける銅の現物価格が先週比1.8%上昇し、トン当たり9,840ドルとなった。中国の景気刺激策への期待感と、チリの主要鉱山での労使交渉難航が重なったことが主因とされる。国内の加工業者への影響は3〜4週間後に波及する見込みで、調達担当者は対応を急いでいる……</p>
+            <div class="sample-columns-2">
+              <div class="sample-col">
+                <h4>▍今週の資材相場</h4>
+                <span class="data-highlight">+1.8%</span>
+                <p>銅（LME現物）先週比。アルミは+0.9%、鉄スクラップは横ばいで推移。</p>
+              </div>
+              <div class="sample-col">
+                <h4>▍来週の注目指標</h4>
+                <p>3/10 中国 生産者物価指数<br>3/12 米 消費者物価指数<br>3/14 日銀 金融政策決定会合</p>
+              </div>
+            </div>
+            <p class="sample-label-bottom">— AI Generated & Human Supervised —</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section section--mid" id="price">
+  <div class="container">
+    <div class="section-head reveal" style="text-align: center;">
+      <span class="section-label">Pricing</span>
+      <h2 class="section-title">シンプルな料金。<br>はじめやすい価格。</h2>
+      <p class="section-subtitle" style="margin: 0 auto;">最低契約期間3ヶ月。以降は1ヶ月前通知でいつでも解約可能です。</p>
+    </div>
+    <div class="price-grid reveal">
+
+      <!-- スターター -->
+      <div class="price-card">
+        <span class="price-plan-name">Starter</span>
+        <div class="price-initial">
+          <span class="label">初期費用</span>
+          <span class="amount">49,800円</span>
+        </div>
+        <div class="price-monthly">
+          <span class="label">月額</span>
+          <div class="amount">19,800<span class="unit">円/月</span></div>
+        </div>
+        <ul class="price-features">
+          <li>月2回配信</li>
+          <li>テンプレートデザイン（3種から選択）</li>
+          <li>配信数 500通まで</li>
+          <li>AI自動生成コンテンツ</li>
+          <li>メールサポート</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary btn-price">このプランで相談する</a>
+      </div>
+
+      <!-- スタンダード（人気） -->
+      <div class="price-card price-card--featured">
+        <span class="price-badge">人気 No.1</span>
+        <span class="price-plan-name">Standard</span>
+        <div class="price-initial">
+          <span class="label">初期費用</span>
+          <span class="amount">98,000円</span>
+        </div>
+        <div class="price-monthly">
+          <span class="label">月額</span>
+          <div class="amount">39,800<span class="unit">円/月</span></div>
+        </div>
+        <ul class="price-features">
+          <li>週1回配信（月4回）</li>
+          <li>セミカスタムデザイン</li>
+          <li>配信数 2,000通まで</li>
+          <li>月1回 内容修正対応</li>
+          <li>月次レポート（開封率等）</li>
+          <li>月次ミーティング（30分）</li>
+        </ul>
+        <a href="#contact" class="btn btn-price btn-price-light">このプランで相談する</a>
+      </div>
+
+      <!-- プレミアム -->
+      <div class="price-card">
+        <span class="price-plan-name">Premium</span>
+        <div class="price-initial">
+          <span class="label">初期費用</span>
+          <span class="amount">198,000円</span>
+        </div>
+        <div class="price-monthly">
+          <span class="label">月額</span>
+          <div class="amount">79,800<span class="unit">円/月</span></div>
+        </div>
+        <ul class="price-features">
+          <li>週2回以上配信</li>
+          <li>フルカスタムデザイン</li>
+          <li>配信数 10,000通まで</li>
+          <li>都度 修正・追加対応</li>
+          <li>専任担当制</li>
+          <li>戦略コンサルティング含む</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary btn-price">このプランで相談する</a>
+      </div>
+
+    </div>
+    <p class="reveal" style="text-align:center; margin-top:32px; font-size:0.8rem; color:var(--gray-light);">
+      配信数・業種・内容によりお見積もりが変わる場合があります。まずはお気軽にご相談ください。
+    </p>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal" style="text-align: center;">
+      <span class="section-label">FAQ</span>
+      <h2 class="section-title">よくある質問</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q">
+          自社で用意するものはありますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">初回ヒアリング（30分）への参加と、毎号の内容確認（15分程度）のみです。配信リストはお客様にご用意いただく必要があります。MailchimpやSendGridへの設定サポートはプランに含まれます。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          どんな業種でも対応できますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">基本的に業種・業界の制限はありません。不動産、士業（税理士・社労士・弁護士等）、メーカー、商社、地域団体など幅広くご対応しています。ただし、医療・法律などの専門資格が必要な分野は、内容の確認体制についてご相談ください。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          内容の精度は大丈夫ですか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">AIが生成したコンテンツは、必ずお客様に確認いただいてから配信します。ファクトチェックの責任はお客様側にありますが、重大な誤りが生じないよう生成プロセスに複数のガードを設けています。「業界紙つくーる」の実績を通じて精度を継続的に改善しています。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          途中でデザインを変えることはできますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">大幅なデザイン変更は別途費用が発生します。ロゴ変更・カラー変更程度であれば無償対応しています。スタンダード以上のプランでは、年1回のリニューアルを含む形にできますのでご相談ください。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          解約はいつでもできますか？
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p class="faq-a-inner">最低契約期間（3ヶ月）以降は、1ヶ月前にご連絡いただければいつでも解約可能です。長期継続の場合は割引オプションもご用意しています。</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Contact Form -->
-  <section class="cta-section" id="contact">
-    <div class="section-inner">
-      <h2>まずはお気軽にご相談ください</h2>
-      <p>業界やご要望をお聞かせください。最適なプランをご提案します。</p>
-      <form class="contact-form" action="https://formspree.io/f/mbdzrgal" method="POST">
+<!-- ===== CONTACT ===== -->
+<section class="section section--dark" id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px;">Contact</p>
+      <h2 class="contact-title reveal">まず、話だけでも<br>どうぞ。</h2>
+      <p class="contact-sub reveal">無料相談（30分）を受け付けています。<br>Zoomでもお電話でも。費用・条件はご相談の中でご説明します。</p>
+      <form class="contact-form reveal" action="https://formspree.io/f/mbdzrgal" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">お名前<span class="req">*</span></label>
+            <input class="form-input" type="text" name="name" placeholder="山田 太郎" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">会社名・屋号</label>
+            <input class="form-input" type="text" name="company" placeholder="〇〇株式会社">
+          </div>
+        </div>
         <div class="form-group">
-          <label for="company">会社名</label>
-          <input type="text" id="company" name="company" placeholder="株式会社〇〇" required>
-        </div>
-        <div class="form-group">
-          <label for="name">お名前</label>
-          <input type="text" id="name" name="name" placeholder="山田 太郎" required>
-        </div>
-        <div class="form-group">
-          <label for="email">メールアドレス</label>
-          <input type="email" id="email" name="email" placeholder="example@company.co.jp" required>
-        </div>
-        <div class="form-group">
-          <label for="industry">対象の業界</label>
-          <input type="text" id="industry" name="industry" placeholder="例: 不動産テック、飲食、医療、物流...">
-        </div>
-        <div class="form-group">
-          <label for="plan">興味のあるプラン</label>
-          <select id="plan" name="plan">
-            <option value="">選択してください</option>
-            <option value="starter">スターター（¥29,800/月）</option>
-            <option value="professional">プロフェッショナル（¥98,000/月）</option>
-            <option value="undecided">まだ決まっていない</option>
+          <label class="form-label">業種<span class="req">*</span></label>
+          <select class="form-select" name="industry" required>
+            <option value="" disabled selected>選択してください</option>
+            <option>不動産業</option>
+            <option>士業（税理士・社労士・弁護士等）</option>
+            <option>製造業・商社</option>
+            <option>地域団体・業界団体</option>
+            <option>金融・保険</option>
+            <option>その他</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="message">ご相談内容</label>
-          <textarea id="message" name="message" placeholder="ご要望やご質問をお書きください"></textarea>
+          <label class="form-label">メールアドレス<span class="req">*</span></label>
+          <input class="form-input" type="email" name="email" placeholder="your@email.com" required>
         </div>
-        <button type="submit" class="form-submit">送信する</button>
+        <div class="form-group">
+          <label class="form-label">ご相談内容</label>
+          <textarea class="form-textarea" name="message" placeholder="業種・現在の情報発信の状況・お悩みなどをお聞かせください。"></textarea>
+        </div>
+        <button type="submit" class="btn btn-submit btn-arrow">送信する</button>
+        <p class="form-note">送信後、2営業日以内にご連絡します。</p>
       </form>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 業界紙つくーる All rights reserved.</p>
-  </footer>
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>業界紙つくーる</h4>
+        <p>AI生成×プロデザインで、業界紙・メルマガの制作・配信代行を行うサービスです。運営：Paul（永野広志）</p>
+      </div>
+      <div class="footer-links">
+        <a href="#service">サービスとは</a>
+        <a href="#sample">サンプル</a>
+        <a href="#price">料金</a>
+        <a href="#contact">無料相談</a>
+        <a href="#">プライバシーポリシー</a>
+        <a href="#">特定商取引法に基づく表記</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      <span>© 2026 業界紙つくーる / Paul</span>
+      <span>Powered by AI — Crafted by Human</span>
+    </div>
+  </div>
+</footer>
 
+<!-- ===== JS ===== -->
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => io.observe(el));
+
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sample-panel').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', function() {
+      const item = this.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
 </body>
 </html>
