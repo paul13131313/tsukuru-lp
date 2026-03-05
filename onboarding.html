@@ -60,7 +60,7 @@
     align-items: center;
     gap: 0;
     margin-bottom: 2rem;
-    max-width: 480px;
+    max-width: 540px;
     width: 100%;
   }
   .progress-step {
@@ -407,13 +407,15 @@
   <div class="progress-step" data-step="5"><span class="progress-num">5</span></div>
   <div class="progress-line"></div>
   <div class="progress-step" data-step="6"><span class="progress-num">6</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" data-step="7"><span class="progress-num">7</span></div>
 </div>
 
 <div class="card" id="mainCard">
 
   <!-- ===== STEP 1: はじめに ===== -->
   <div class="step active" id="step1">
-    <div class="step-badge">STEP 1 / 6</div>
+    <div class="step-badge">STEP 1 / 7</div>
     <h1 class="step-title">配信設定をはじめましょう</h1>
     <p class="step-text">
       これから、メール配信に必要な設定をご案内します。<br><br>
@@ -428,7 +430,7 @@
 
   <!-- ===== STEP 2: Resendにアクセス ===== -->
   <div class="step" id="step2">
-    <div class="step-badge">STEP 2 / 6</div>
+    <div class="step-badge">STEP 2 / 7</div>
     <h1 class="step-title">Resendのサイトを開きます</h1>
     <p class="step-text">
       下のボタンを押すと、Resendのサイトが<br>
@@ -459,7 +461,7 @@
 
   <!-- ===== STEP 3: アカウント登録 ===== -->
   <div class="step" id="step3">
-    <div class="step-badge">STEP 3 / 6</div>
+    <div class="step-badge">STEP 3 / 7</div>
     <h1 class="step-title">Resendに登録する</h1>
     <p class="step-text">
       Resendのページで、以下を入力してください。
@@ -508,7 +510,7 @@
 
   <!-- ===== STEP 4: API Keysページへ ===== -->
   <div class="step" id="step4">
-    <div class="step-badge">STEP 4 / 6</div>
+    <div class="step-badge">STEP 4 / 7</div>
     <h1 class="step-title">API Keysページを開く</h1>
     <p class="step-text">
       ログイン後の画面で、<br>
@@ -546,7 +548,7 @@
 
   <!-- ===== STEP 5: APIキー作成 ===== -->
   <div class="step" id="step5">
-    <div class="step-badge">STEP 5 / 6</div>
+    <div class="step-badge">STEP 5 / 7</div>
     <h1 class="step-title">APIキーを作成する</h1>
     <p class="step-text">
       「Create API Key」を押した後の画面で、<br>
@@ -593,9 +595,76 @@
     </div>
   </div>
 
-  <!-- ===== STEP 6: フォーム入力 ===== -->
+  <!-- ===== STEP 6: 読者リストアップロード ===== -->
   <div class="step" id="step6">
-    <div class="step-badge">STEP 6 / 6</div>
+    <div class="step-badge">STEP 6 / 7</div>
+    <h1 class="step-title">読者リストを登録しましょう</h1>
+    <p class="step-text">
+      メールを送る相手のリストをResendに登録します。<br>
+      ExcelやGoogleスプレッドシートで管理している<br>
+      <strong>お客様のメールアドレスをそのまま使えます。</strong>
+    </p>
+    <ul class="instruction-list">
+      <li>
+        <span class="instruction-num">1</span>
+        <span>Resendのダッシュボードを開く</span>
+      </li>
+      <li>
+        <span class="instruction-num">2</span>
+        <span>左メニューの <strong>「Audiences」</strong> をクリック</span>
+      </li>
+      <li>
+        <span class="instruction-num">3</span>
+        <span>右上の「Add Contact」横の <strong>▼</strong> から<br><strong>「Import Contacts」</strong>を選択</span>
+      </li>
+      <li>
+        <span class="instruction-num">4</span>
+        <span><strong>CSVファイル</strong>を選択してアップロード<br>（ExcelはCSV形式で保存してください）</span>
+      </li>
+      <li>
+        <span class="instruction-num">5</span>
+        <span>列の設定で <strong>「email」</strong> を選択して完了</span>
+      </li>
+    </ul>
+
+    <div style="background:var(--paper);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.82rem;line-height:1.8;color:var(--gray);">
+      <strong style="color:var(--ink);">CSVの作り方（Excelの場合）</strong><br>
+      ・A1セルに <strong>email</strong> と入力<br>
+      ・A2以降にメールアドレスを1行ずつ入力<br>
+      ・「名前を付けて保存」→ 形式を <strong>「CSV」</strong> に変更して保存
+    </div>
+
+    <div class="step-time">⏱ このステップ：約2分</div>
+    <button class="btn-primary" onclick="goTo(7)">アップロードできました → 次へ</button>
+
+    <div class="trouble" id="trouble6">
+      <button class="trouble-toggle" onclick="toggleTrouble('trouble6')">
+        <span class="trouble-arrow">▶</span> つまずいたら
+      </button>
+      <div class="trouble-content">
+        <div class="trouble-item">
+          <div class="trouble-q">「Audiences」が見つからない</div>
+          <div class="trouble-a">→ 左メニューを下にスクロールしてください。人のアイコンと一緒に「Audiences」と表示されています。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">Excelのままアップロードしようとしてしまう</div>
+          <div class="trouble-a">→ .xlsx形式はそのまま使えません。必ず「名前を付けて保存」から <strong>CSV形式（.csv）</strong>を選んで保存し直してください。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">メールアドレスの列が認識されない</div>
+          <div class="trouble-a">→ CSVの1行目（見出し行）が「email」になっているか確認してください。「メールアドレス」「Email」など別の名前だと認識されないことがあります。</div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q">リストがまだ準備できていない</div>
+          <div class="trouble-a">→ 大丈夫です。あとから登録することもできます。このステップはスキップして次へ進んでください。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 7: フォーム入力 ===== -->
+  <div class="step" id="step7">
+    <div class="step-badge">STEP 7 / 7</div>
     <h1 class="step-title">APIキーを貼り付ける</h1>
     <p class="step-text">
       先ほどの <strong>「re_」で始まる文字列</strong>をコピーして、<br>
@@ -655,7 +724,7 @@
 <script>
   var WORKER_URL = 'https://tsukuru-hearing.hiroshinagano0113.workers.dev';
   var currentStep = 1;
-  var totalSteps = 6;
+  var totalSteps = 7;
 
   // URLパラメータからsession_idを取得
   var params = new URLSearchParams(window.location.search);
