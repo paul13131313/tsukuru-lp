@@ -443,7 +443,7 @@
   }
   .problem-text {
     font-family: 'Noto Serif JP', serif;
-    font-size: 1.05rem;
+    font-size: 1.35rem;
     font-weight: 600;
     margin-bottom: 8px;
   }
@@ -506,6 +506,51 @@
     border: 1px solid var(--gold-light);
     padding: 2px 8px;
     margin-bottom: 10px;
+  }
+
+  /* ===== ABOUT IMAGES ===== */
+  .image-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .image-option {
+    background: var(--paper);
+    padding: 40px 32px;
+    text-align: center;
+  }
+  .image-option-icon {
+    font-size: 2.4rem;
+    margin-bottom: 16px;
+    filter: grayscale(0.3);
+  }
+  .image-option-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .image-option-tag {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-light);
+    padding: 2px 10px;
+    margin-bottom: 14px;
+  }
+  .image-option-desc {
+    font-size: 0.82rem;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+  @media (max-width: 768px) {
+    .image-options {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* ===== SAMPLES ===== */
@@ -608,6 +653,82 @@
     margin-bottom: 4px;
     display: block;
   }
+  /* -- Sample Variants -- */
+  .sample-preview--fudosan {
+    background: #fafaf8;
+    border-color: #c5b999;
+  }
+  .sample-preview--fudosan .sample-masthead {
+    color: #1a2744;
+  }
+  .sample-preview--fudosan .sample-header-row {
+    border-bottom-color: #1a2744;
+  }
+  .sample-preview--fudosan .sample-lead-headline {
+    border-left-color: #b8924a;
+    color: #1a2744;
+  }
+  .sample-preview--fudosan .data-highlight {
+    color: #b8924a;
+  }
+
+  .sample-preview--shigyou {
+    background: #f7f5f0;
+    border-color: #9b917e;
+  }
+  .sample-preview--shigyou .sample-masthead {
+    color: #2a4a3a;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .sample-preview--shigyou .sample-header-row {
+    border-bottom-color: #2a4a3a;
+  }
+  .sample-preview--shigyou .sample-lead-headline {
+    border-left-color: #2a4a3a;
+    color: #2a4a3a;
+  }
+  .sample-preview--shigyou .sample-col h4 {
+    color: #2a4a3a;
+  }
+
+  .sample-preview--seizou {
+    background: #f2f4f6;
+    border-color: #a0aab4;
+  }
+  .sample-preview--seizou .sample-masthead {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    color: #1a2a3a;
+    letter-spacing: 0.05em;
+  }
+  .sample-preview--seizou .sample-header-row {
+    border-bottom: 3px double #1a2a3a;
+  }
+  .sample-preview--seizou .sample-lead-headline {
+    border-left-color: #2670a8;
+    color: #1a2a3a;
+  }
+  .sample-preview--seizou .data-highlight {
+    color: #2670a8;
+  }
+  .sample-preview--seizou .sample-col h4 {
+    color: #2670a8;
+  }
+
+  .sample-preview--kaigai {
+    background: #fdf8f0;
+    border-color: #d4a574;
+  }
+  .sample-preview--kaigai .sample-masthead {
+    color: #8b1a1a;
+  }
+  .sample-preview--kaigai .sample-header-row {
+    border-bottom-color: #8b1a1a;
+  }
+  .sample-preview--kaigai .sample-lead-headline {
+    border-left-color: #d4a574;
+  }
+
   .sample-label-bottom {
     text-align: center;
     margin-top: 20px;
@@ -629,6 +750,8 @@
     background: var(--paper);
     padding: 48px 36px;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
   .price-card--featured {
     background: var(--ink);
@@ -706,6 +829,7 @@
     flex-direction: column;
     gap: 10px;
     margin-bottom: 32px;
+    flex: 1;
   }
   .price-features li {
     font-size: 0.78rem;
@@ -1108,6 +1232,37 @@
   </div>
 </section>
 
+<!-- ===== ABOUT IMAGES ===== -->
+<section class="section" id="about-images">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">About Images</span>
+      <h2 class="section-title">写真がなくても、<br>プロの仕上がりに。</h2>
+      <p class="section-subtitle">業界紙に必要なビジュアルは、3つのスタイルからお選びいただけます。</p>
+    </div>
+    <div class="image-options reveal">
+      <div class="image-option">
+        <div class="image-option-icon">🤖</div>
+        <h3 class="image-option-title">AI生成イメージ</h3>
+        <span class="image-option-tag">Standard</span>
+        <p class="image-option-desc">記事のテーマに合わせてAIが自動でイメージ画像を生成。写真撮影や素材購入の手間を完全にゼロにします。</p>
+      </div>
+      <div class="image-option">
+        <div class="image-option-icon">🎨</div>
+        <h3 class="image-option-title">モザイク・グラフィック表現</h3>
+        <span class="image-option-tag">Option</span>
+        <p class="image-option-desc">人物写真をモザイク処理したり、データをグラフィック化。プライバシーに配慮しつつ、ビジュアルのインパクトを実現。</p>
+      </div>
+      <div class="image-option">
+        <div class="image-option-icon">📰</div>
+        <h3 class="image-option-title">テキスト主体レイアウト</h3>
+        <span class="image-option-tag">Simple</span>
+        <p class="image-option-desc">写真を使わず、タイポグラフィと罫線で構成するクラシックなスタイル。読みやすさと信頼感を重視する業種に最適。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== SAMPLES ===== -->
 <section class="section" id="sample">
   <div class="container">
@@ -1121,13 +1276,13 @@
         <button class="tab-btn active" data-tab="fudosan">不動産業版</button>
         <button class="tab-btn" data-tab="shigyou">士業版</button>
         <button class="tab-btn" data-tab="seizou">製造業版</button>
-        <button class="tab-btn" data-tab="taiwan">台湾ビジネス版</button>
+        <button class="tab-btn" data-tab="kaigai">海外進出版</button>
       </div>
       <div class="sample-panels">
 
         <!-- 不動産 -->
         <div class="sample-panel active" id="tab-fudosan">
-          <div class="sample-preview">
+          <div class="sample-preview sample-preview--fudosan">
             <div class="sample-header-row">
               <div>
                 <div class="sample-masthead">不動産マーケット通信</div>
@@ -1157,7 +1312,7 @@
 
         <!-- 士業 -->
         <div class="sample-panel" id="tab-shigyou">
-          <div class="sample-preview">
+          <div class="sample-preview sample-preview--shigyou">
             <div class="sample-header-row">
               <div>
                 <div class="sample-masthead">税務・労務インサイト</div>
@@ -1186,7 +1341,7 @@
 
         <!-- 製造業 -->
         <div class="sample-panel" id="tab-seizou">
-          <div class="sample-preview">
+          <div class="sample-preview sample-preview--seizou">
             <div class="sample-header-row">
               <div>
                 <div class="sample-masthead">製造業マーケット便り</div>
@@ -1214,9 +1369,9 @@
           </div>
         </div>
 
-        <!-- 台湾ビジネス -->
-        <div class="sample-panel" id="tab-taiwan">
-          <div class="sample-preview">
+        <!-- 海外進出 -->
+        <div class="sample-panel" id="tab-kaigai">
+          <div class="sample-preview sample-preview--kaigai">
             <div class="sample-header-row">
               <div>
                 <div class="sample-masthead">台灣生成新聞</div>
