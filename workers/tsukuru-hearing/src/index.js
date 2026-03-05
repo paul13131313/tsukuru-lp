@@ -99,7 +99,7 @@ export default {
         return handleApproveGet(request, env, origin);
       }
       if (request.method === 'POST') {
-        return handleApprovePost(request, env, origin);
+        return handleApprovePost(request, env, origin, ctx);
       }
     }
 
@@ -430,7 +430,7 @@ function getIndustryTheme(industry) {
 }
 
 // ===== 記事自動生成 =====
-async function generateArticle(clientData, env) {
+async function generateArticle(clientData, env, revisionInstructions) {
   const { answers, issueNumber } = clientData;
   const today = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
   const titleText = answers.title || '業界通信';
@@ -517,7 +517,10 @@ async function generateArticle(clientData, env) {
 - ${answers.industry}の読者が「これは役に立つ」と感じる具体的な情報を書いてください
 - 抽象的な記述を避け、数字・事例・トレンド名を積極的に盛り込んでください
 - 「${answers.tone}」のトーンを厳密に守ってください
-- 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください`;
+- 全セクション（特集・ニュース3本・データ・カレンダー・編集後記・フッター）を必ず含めてください${revisionInstructions ? `
+
+## 【修正指示】以下のフィードバックを必ず反映してください:
+${revisionInstructions}` : ''}`;
 
   try {
     const response = await fetch(CLAUDE_API_URL, {
@@ -637,11 +640,13 @@ async function handleApproveGet(request, env, origin) {
     title: clientData.answers.title || '業界通信',
     issueNumber: clientData.issueNumber,
     status: clientData.status,
+    revisionCount: clientData.revisionCount || 0,
+    maxRevisions: 3,
   }, 200, origin);
 }
 
 // ===== POST /approve — 承認/修正依頼処理 =====
-async function handleApprovePost(request, env, origin) {
+async function handleApprovePost(request, env, origin, ctx) {
   let body;
   try {
     body = await request.json();
@@ -691,15 +696,68 @@ async function handleApprovePost(request, env, origin) {
   }
 
   if (action === 'revise') {
+    // 修正回数チェック（上限3回）
+    const revisionCount = (clientData.revisionCount || 0) + 1;
+    const MAX_REVISIONS = 3;
+
+    if (revisionCount > MAX_REVISIONS) {
+      // 上限超過: Paulに通知して手動対応を依頼
+      await sendRevisionLimitNotification(clientData, feedback, freeText, env);
+      return json({
+        ok: true,
+        limitReached: true,
+        message: '修正回数の上限に達しました。\n担当者より直接ご連絡いたします。',
+      }, 200, origin);
+    }
+
+    // フィードバックをKVに保存
+    const revisionEntry = {
+      count: revisionCount,
+      feedback: feedback || [],
+      freeText: freeText || '',
+      requestedAt: new Date().toISOString(),
+    };
+    clientData.revisionCount = revisionCount;
+    clientData.revisionHistory = clientData.revisionHistory || [];
+    clientData.revisionHistory.push(revisionEntry);
     clientData.status = 'revision_requested';
     await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
 
-    // Paulにフィードバック通知
-    await sendRevisionNotification(clientData, feedback, freeText, env);
+    // フィードバックを反映した修正指示を組み立て
+    const revisionInstructions = buildRevisionInstructions(feedback, freeText);
+
+    // バックグラウンドで記事再生成→サンプルメール送信
+    ctx.waitUntil((async () => {
+      try {
+        const articleHtml = await generateArticle(clientData, env, revisionInstructions);
+        clientData.articleHtml = articleHtml;
+
+        const newToken = crypto.randomUUID();
+        clientData.approvalToken = newToken;
+        clientData.tokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+        clientData.status = 'pending_approval';
+
+        await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
+        // 古いトークンインデックスを削除、新しいトークンインデックスを作成
+        await env.CLIENTS.delete(`token:${token}`);
+        await env.CLIENTS.put(`token:${newToken}`, clientData.email, { expirationTtl: 7 * 24 * 60 * 60 });
+
+        await sendRevisionSampleEmail(clientData, env);
+        await sendRevisionAutoNotification(clientData, revisionEntry, env);
+        console.log(`Revision #${revisionCount} article regenerated and sample sent for ${clientData.email}`);
+      } catch (err) {
+        console.error(`Revision article generation failed for ${clientData.email}: ${err.message}`);
+        clientData.status = 'revision_requested';
+        await env.CLIENTS.put(kvKey, JSON.stringify(clientData));
+        // エラー時はPaulに手動対応を依頼
+        await sendRevisionNotification(clientData, feedback, freeText, env);
+      }
+    })());
 
     return json({
       ok: true,
-      message: '修正依頼を受け付けました。2営業日以内に修正版をお送りします。',
+      revisionCount,
+      message: `修正依頼を受け付けました（${revisionCount}/${MAX_REVISIONS}回目）。\nまもなく修正版のサンプルをメールでお送りします。`,
     }, 200, origin);
   }
 
@@ -880,6 +938,187 @@ ${freeTextBlock}`;
     });
   } catch (err) {
     console.error('Revision notification email error:', err.message);
+  }
+}
+
+// ===== フィードバックからプロンプト修正指示を組み立て =====
+function buildRevisionInstructions(feedback, freeText) {
+  const feedbackMap = {
+    '文体・トーンを変えたい': '文体・トーンを大幅に変更してください。現在のトーンが合っていないため、読者層により適した表現に書き直してください。',
+    '記事のテーマが業種に合っていない': 'この業種により特化した内容に変更してください。業種固有の課題・トレンド・用語を使い、読者が「自分ごと」と感じる記事にしてください。',
+    'もっとやわらかい表現にしたい': '専門用語を減らし、平易でやわらかい文章に変更してください。初心者でも読みやすい表現を心がけてください。',
+    'もっと専門的な内容にしたい': '業界専門用語・具体的な数字・実例・事例を増やし、より専門的で深い内容にしてください。プロの読者が満足する情報密度にしてください。',
+    'タイトル・見出しを変えたい': '見出し・タイトルをより魅力的で目を引くものに変更してください。読者がクリックしたくなるような表現にしてください。',
+    'レイアウト・デザインを変えたい': 'レイアウト構成を変更してください。セクション間の余白、色使い、フォントサイズのバランスを見直してください。',
+  };
+
+  const instructions = [];
+  if (Array.isArray(feedback)) {
+    for (const item of feedback) {
+      if (feedbackMap[item]) {
+        instructions.push(`- ${feedbackMap[item]}`);
+      }
+    }
+  }
+  if (freeText && freeText.trim()) {
+    instructions.push(`- クライアントからの追加要望: 「${freeText.trim()}」`);
+  }
+  return instructions.join('\n');
+}
+
+// ===== 修正版サンプルメール送信（クライアント宛） =====
+async function sendRevisionSampleEmail(clientData, env) {
+  const approveUrl = `${APPROVE_PAGE_URL}?token=${clientData.approvalToken}`;
+  const titleText = clientData.answers.title || '業界通信';
+
+  const wrapperHtml = `
+<div style="max-width:640px;margin:0 auto;font-family:'Hiragino Kaku Gothic ProN',sans-serif;">
+  <div style="background:#1c1814;color:#f4ede0;padding:16px 24px;text-align:center;font-size:14px;">
+    【${escapeHtml(titleText)}】修正版サンプルのお知らせ
+  </div>
+  <div style="padding:24px;background:#fdfaf5;border:1px solid rgba(28,24,20,0.15);">
+    <p style="font-size:15px;line-height:1.8;color:#333;margin:0 0 16px;">
+      ご指摘いただいた内容を反映し、「${escapeHtml(titleText)}」第${clientData.issueNumber}号の修正版を作成しました。<br>
+      以下のリンクから内容をご確認ください。
+    </p>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="${approveUrl}" style="display:inline-block;background:#1c1814;color:#f4ede0;padding:14px 32px;text-decoration:none;border-radius:8px;font-size:16px;font-weight:bold;">
+        修正版を確認する →
+      </a>
+    </div>
+    <p style="font-size:13px;color:#6b6058;line-height:1.7;margin:16px 0 0;">
+      修正回数: ${clientData.revisionCount}/3回<br>
+      さらに修正が必要な場合は、確認ページ上のフォームからご指示いただけます。
+    </p>
+  </div>
+  <div style="background:#1c1814;color:#6b6058;padding:12px 24px;text-align:center;font-size:11px;">
+    業界紙つくーる — AI生成×プロデザインの業界紙配信サービス
+  </div>
+</div>`;
+
+  try {
+    const res = await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'onboarding@resend.dev',
+        reply_to: NOTIFY_TO,
+        to: clientData.email,
+        subject: `【${titleText}】修正版のサンプルをお送りします`,
+        html: wrapperHtml,
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`Revision sample email send error ${res.status}: ${errText}`);
+    } else {
+      console.log(`Revision sample email sent to ${clientData.email}`);
+    }
+  } catch (err) {
+    console.error('Revision sample email send error:', err.message);
+  }
+}
+
+// ===== 修正版自動送信完了通知（Paul宛） =====
+async function sendRevisionAutoNotification(clientData, revisionEntry, env) {
+  const titleText = clientData.answers.title || '業界通信';
+  const feedbackItems = Array.isArray(revisionEntry.feedback) && revisionEntry.feedback.length > 0
+    ? '<h3 style="margin:16px 0 8px;">フィードバック内容</h3><ul style="margin:0;padding-left:20px;">' +
+      revisionEntry.feedback.map(f => `<li style="margin:4px 0;">${escapeHtml(f)}</li>`).join('') +
+      '</ul>'
+    : '';
+
+  const freeTextBlock = revisionEntry.freeText
+    ? `<h3 style="margin:16px 0 8px;">自由記述</h3><p style="background:#f5f5f5;padding:12px;border-radius:8px;margin:0;">${escapeHtml(revisionEntry.freeText)}</p>`
+    : '';
+
+  const htmlBody = `
+<h2>【業界紙つくーる】修正版を自動送信しました</h2>
+<table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">クライアント</td><td style="padding:8px 0;font-weight:bold;">${escapeHtml(clientData.email)}</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">タイトル</td><td style="padding:8px 0;">${escapeHtml(titleText)}</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">号数</td><td style="padding:8px 0;">第${clientData.issueNumber}号</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">修正回数</td><td style="padding:8px 0;font-weight:bold;">${clientData.revisionCount}/3回</td></tr>
+</table>
+${feedbackItems}
+${freeTextBlock}
+<p style="margin-top:16px;font-size:13px;color:#888;">※ フィードバックを反映した修正版を自動生成し、クライアントに送信済みです。</p>`;
+
+  try {
+    await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'onboarding@resend.dev',
+        to: NOTIFY_TO,
+        subject: `【業界紙つくーる】修正版自動送信（${escapeHtml(titleText)} 第${clientData.issueNumber}号 修正${clientData.revisionCount}回目）`,
+        html: htmlBody,
+      }),
+    });
+  } catch (err) {
+    console.error('Revision auto notification email error:', err.message);
+  }
+}
+
+// ===== 修正上限到達通知（Paul宛） =====
+async function sendRevisionLimitNotification(clientData, feedback, freeText, env) {
+  const titleText = clientData.answers.title || '業界通信';
+  const feedbackItems = Array.isArray(feedback) && feedback.length > 0
+    ? '<h3 style="margin:16px 0 8px;">最終フィードバック</h3><ul style="margin:0;padding-left:20px;">' +
+      feedback.map(f => `<li style="margin:4px 0;">${escapeHtml(f)}</li>`).join('') +
+      '</ul>'
+    : '';
+
+  const freeTextBlock = freeText
+    ? `<h3 style="margin:16px 0 8px;">自由記述</h3><p style="background:#f5f5f5;padding:12px;border-radius:8px;margin:0;">${escapeHtml(freeText)}</p>`
+    : '';
+
+  const historyBlock = Array.isArray(clientData.revisionHistory) && clientData.revisionHistory.length > 0
+    ? '<h3 style="margin:16px 0 8px;">修正履歴</h3>' +
+      clientData.revisionHistory.map((h, i) =>
+        `<p style="margin:4px 0;font-size:13px;"><strong>${i + 1}回目</strong>（${h.requestedAt}）: ${(h.feedback || []).join('、')}${h.freeText ? '、' + h.freeText : ''}</p>`
+      ).join('')
+    : '';
+
+  const htmlBody = `
+<h2 style="color:#8b1a1a;">【業界紙つくーる】修正上限到達 ⚠️ 手動対応が必要です</h2>
+<table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">クライアント</td><td style="padding:8px 0;font-weight:bold;">${escapeHtml(clientData.email)}</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">タイトル</td><td style="padding:8px 0;">${escapeHtml(titleText)}</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">号数</td><td style="padding:8px 0;">第${clientData.issueNumber}号</td></tr>
+  <tr><td style="padding:8px 16px 8px 0;color:#888;">修正回数</td><td style="padding:8px 0;font-weight:bold;color:#8b1a1a;">${clientData.revisionCount || 3}/3回（上限到達）</td></tr>
+</table>
+${feedbackItems}
+${freeTextBlock}
+${historyBlock}
+<p style="margin-top:16px;font-size:14px;color:#333;background:#fff3cd;padding:12px;border-radius:8px;border-left:4px solid #ffc107;">
+  自動修正の上限に達したため、クライアントに「担当者より直接ご連絡いたします」と案内しています。<br>
+  直接クライアントに連絡して対応をお願いします。
+</p>`;
+
+  try {
+    await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'onboarding@resend.dev',
+        to: NOTIFY_TO,
+        subject: `【業界紙つくーる】⚠️ 修正上限到達・手動対応必要（${escapeHtml(titleText)}）`,
+        html: htmlBody,
+      }),
+    });
+  } catch (err) {
+    console.error('Revision limit notification email error:', err.message);
   }
 }
 

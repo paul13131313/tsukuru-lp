@@ -385,6 +385,27 @@
           }
         };
 
+        // 修正回数表示
+        if (data.revisionCount > 0) {
+          var revisionInfo = document.createElement('p');
+          revisionInfo.style.cssText = 'font-size:0.85rem;color:var(--gray);margin-top:0.5rem;';
+          revisionInfo.textContent = '修正回数: ' + data.revisionCount + '/' + data.maxRevisions + '回';
+          document.querySelector('.card-subtitle').after(revisionInfo);
+        }
+
+        // 修正上限到達時はフィードバックセクションを無効化
+        if (data.revisionCount >= data.maxRevisions) {
+          var feedbackSection = document.querySelector('.feedback-section');
+          var btnRevise = document.getElementById('btnRevise');
+          btnRevise.disabled = true;
+          btnRevise.textContent = '修正上限に達しました';
+          btnRevise.style.opacity = '0.5';
+          // チェックボックス・テキストエリアも無効化
+          document.querySelectorAll('.checkbox-group input').forEach(function(cb) { cb.disabled = true; });
+          document.getElementById('freeText').disabled = true;
+          document.getElementById('freeText').placeholder = '修正回数の上限に達しています。承認するか、担当者にご連絡ください。';
+        }
+
         // ローディング非表示、コンテンツ表示
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('contentState').style.display = 'block';
@@ -486,11 +507,23 @@
     .then(function(data) {
       if (data.ok) {
         document.querySelector('.feedback-section').style.display = 'none';
-        showResult('info',
-          '<span class="result-icon">📝</span>' +
-          '<strong>ご要望を受け付けました</strong><br>' +
-          '2営業日以内に修正版をお送りします。'
-        );
+        if (data.limitReached) {
+          // 修正上限到達
+          showResult('info',
+            '<span class="result-icon">⚠️</span>' +
+            '<strong>修正回数の上限に達しました</strong><br>' +
+            '担当者より直接ご連絡いたします。<br>' +
+            '<span style="font-size:0.85rem;color:var(--gray);">今しばらくお待ちください。</span>'
+          );
+        } else {
+          // 自動再生成フロー
+          showResult('info',
+            '<span class="result-icon">📝</span>' +
+            '<strong>修正依頼を受け付けました（' + data.revisionCount + '/3回目）</strong><br>' +
+            'まもなく修正版のサンプルをメールでお送りします。<br>' +
+            '<span style="font-size:0.85rem;color:var(--gray);">新しいメールが届きましたら、再度内容をご確認ください。</span>'
+          );
+        }
       } else {
         showResult('error', data.error || 'エラーが発生しました。');
         setButtonsDisabled(false);
