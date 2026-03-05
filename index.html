@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>業界紙つくーる | AIであなたの業界専門メディアをつくろう</title>
+  <meta name="description" content="業界紙つくーる - AIが毎日、あなたの業界に特化したニュースレターを自動生成。専門メディアを手間なく運営。">
+  <meta property="og:title" content="業界紙つくーる | AIであなたの業界専門メディアをつくろう">
+  <meta property="og:description" content="AIが毎日、あなたの業界に特化したニュースレターを自動生成。専門メディアを手間なく運営。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://paul13131313.github.io/tsukuru-lp/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1a1a2e;
+      --accent: #e94560;
+      --accent-light: #ff6b81;
+      --bg: #f8f9fa;
+      --text: #1a1a2e;
+      --text-light: #6c757d;
+      --white: #ffffff;
+      --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: var(--white);
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(233, 69, 96, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(15, 52, 96, 0.3) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(233, 69, 96, 0.2);
+      border: 1px solid rgba(233, 69, 96, 0.4);
+      color: var(--accent-light);
+      padding: 0.4rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: var(--white);
+      padding: 1rem 2.5rem;
+      border-radius: 100px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(233, 69, 96, 0.5);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.8rem;
+      text-align: center;
+      animation: bounce 2s infinite;
+    }
+
+    .hero-scroll::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 0.5rem auto 0;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-8px); }
+    }
+
+    /* ─── Section Common ─── */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      color: var(--text-light);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ─── Problem ─── */
+    .problem {
+      background: var(--white);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .problem-card {
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      border: 1px solid #e9ecef;
+    }
+
+    .problem-card .emoji {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .problem-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .problem-card p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    /* ─── How It Works ─── */
+    .how {
+      background: var(--bg);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      counter-reset: step;
+    }
+
+    .step {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      counter-increment: step;
+    }
+
+    .step::before {
+      content: counter(step);
+      position: absolute;
+      top: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .step .emoji {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .step h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    /* ─── Features ─── */
+    .features {
+      background: var(--white);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid #e9ecef;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow);
+    }
+
+    .feature-card .emoji {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    /* ─── Use Cases ─── */
+    .usecases {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: var(--white);
+    }
+
+    .usecases .section-title p {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .usecase-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .usecase-card .emoji {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .usecase-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-light);
+    }
+
+    .usecase-card p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+    }
+
+    /* ─── Pricing ─── */
+    .pricing {
+      background: var(--bg);
+    }
+
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--accent);
+    }
+
+    .pricing-card.featured::before {
+      content: 'おすすめ';
+      position: absolute;
+      top: -0.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: var(--white);
+      padding: 0.2rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .pricing-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-card .price {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin: 1rem 0;
+    }
+
+    .pricing-card .price small {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+
+    .pricing-card ul {
+      list-style: none;
+      text-align: left;
+      margin: 1.5rem 0;
+    }
+
+    .pricing-card li {
+      padding: 0.4rem 0;
+      font-size: 0.95rem;
+      color: var(--text-light);
+    }
+
+    .pricing-card li::before {
+      content: '✓ ';
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .pricing-cta {
+      display: inline-block;
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 100px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .pricing-cta.primary {
+      background: var(--accent);
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
+    }
+
+    .pricing-cta.secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid #dee2e6;
+    }
+
+    .pricing-cta:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ─── CTA / Form ─── */
+    .cta-section {
+      background: var(--white);
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section > .section-inner > p {
+      color: var(--text-light);
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .contact-form {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: var(--bg);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-submit {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      background: var(--primary);
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      section {
+        padding: 4rem 1.5rem;
+      }
+
+      .hero {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">AI x 業界特化メディア</div>
+      <h1>あなたの業界の<br><span>専門紙</span>をつくろう</h1>
+      <p>AIが毎日、あなたの業界に特化したニュースを自動で収集・編集。専門メディアを手間なく立ち上げ、業界内でのプレゼンスを確立します。</p>
+      <a href="#contact" class="hero-cta">無料で相談する →</a>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <!-- Problem -->
+  <section class="problem">
+    <div class="section-inner">
+      <div class="section-title">
+        <h2>こんなお悩みありませんか？</h2>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="emoji">📰</div>
+          <h3>業界の情報が散らばっている</h3>
+          <p>ニュースサイト、SNS、業界団体...情報源が多すぎて追いきれない。毎朝のチェックだけで時間が消える。</p>
+        </div>
+        <div class="problem-card">
+          <div class="emoji">🏢</div>
+          <h3>自社メディアを持ちたいけど<br>リソースがない</h3>
+          <p>オウンドメディアは始めたい。でも編集者を雇う予算も、毎日記事を書く時間もない。</p>
+        </div>
+        <div class="problem-card">
+          <div class="emoji">🎯</div>
+          <h3>業界内での存在感を<br>高めたい</h3>
+          <p>専門性のある情報発信で信頼を積み上げたいが、コンテンツを継続的に出し続けるのは大変。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how">
+    <div class="section-inner">
+      <div class="section-title">
+        <h2>3ステップで業界紙が完成</h2>
+        <p>難しい設定は一切不要。あなたの業界を教えるだけで、AI編集部が動き出します。</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="emoji">💬</div>
+          <h3>業界・テーマを伝える</h3>
+          <p>「不動産テック」「飲食業界」「地方自治体DX」など、カバーしたい領域を教えてください。</p>
+        </div>
+        <div class="step">
+          <div class="emoji">🤖</div>
+          <h3>AIが毎日ニュースを編集</h3>
+          <p>業界に関連するニュースを自動収集し、要約・分類・コメントを付けて紙面を構成します。</p>
+        </div>
+        <div class="step">
+          <div class="emoji">🚀</div>
+          <h3>あなたのメディアとして配信</h3>
+          <p>Webサイト・メールニュースレター・SNSなど、好きなチャネルで業界紙を届けられます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="section-inner">
+      <div class="section-title">
+        <h2>業界紙つくーるの特長</h2>
+        <p>AIの力で、プロの編集部と同等のクオリティを実現します。</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="emoji">🔍</div>
+          <h3>業界特化の情報収集</h3>
+          <p>ニュースサイト、RSS、SNS、業界団体の発表など、多様なソースからAIが自動収集。ノイズを除去し、本当に重要なニュースだけをピックアップ。</p>
+        </div>
+        <div class="feature-card">
+          <div class="emoji">✍️</div>
+          <h3>プロ品質の記事生成</h3>
+          <p>ただの要約ではありません。業界の文脈を理解したAIが、読者に価値ある解説やインサイトを付加した記事を生成します。</p>
+        </div>
+        <div class="feature-card">
+          <div class="emoji">🎨</div>
+          <h3>ブランドに合わせたデザイン</h3>
+          <p>あなたの企業・サービスのブランドカラーやロゴに合わせた紙面デザイン。読者に一貫したブランド体験を提供。</p>
+        </div>
+        <div class="feature-card">
+          <div class="emoji">📊</div>
+          <h3>データ＆トレンド分析</h3>
+          <p>株価・市場データ・SNSトレンドなどのリアルタイムデータも紙面に自動統合。数字で業界の「今」を伝えます。</p>
+        </div>
+        <div class="feature-card">
+          <div class="emoji">📧</div>
+          <h3>マルチチャネル配信</h3>
+          <p>Webサイト掲載、メールニュースレター、LINE配信、SNS自動投稿など、読者に届く最適なチャネルで配信。</p>
+        </div>
+        <div class="feature-card">
+          <div class="emoji">📈</div>
+          <h3>読者分析ダッシュボード</h3>
+          <p>どの記事が読まれているか、どのテーマに関心が高いかを可視化。データに基づいたコンテンツ改善が可能。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="usecases">
+    <div class="section-inner">
+      <div class="section-title">
+        <h2>活用シーン</h2>
+        <p>あらゆる業界・目的で、専門メディアの力を活用できます。</p>
+      </div>
+      <div class="usecase-grid">
+        <div class="usecase-card">
+          <div class="emoji">🏗️</div>
+          <h3>業界団体の広報誌として</h3>
+          <p>会員向けに業界ニュースを毎日配信。団体の存在価値を高め、会員エンゲージメントを向上。</p>
+        </div>
+        <div class="usecase-card">
+          <div class="emoji">💼</div>
+          <h3>企業のオウンドメディアとして</h3>
+          <p>自社の専門領域に関するメディアを運営。リード獲得とブランディングを同時に実現。</p>
+        </div>
+        <div class="usecase-card">
+          <div class="emoji">🎓</div>
+          <h3>社内報・ナレッジ共有として</h3>
+          <p>業界動向を社内に自動配信。営業チームの商談力向上、経営陣の意思決定をサポート。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing">
+    <div class="section-inner">
+      <div class="section-title">
+        <h2>料金プラン</h2>
+        <p>まずはスタータープランで効果を実感してください。</p>
+      </div>
+      <div class="pricing-cards">
+        <div class="pricing-card">
+          <h3>スターター</h3>
+          <div class="price">¥29,800<small>/月</small></div>
+          <ul>
+            <li>1業界テーマ</li>
+            <li>毎日自動更新</li>
+            <li>Webサイト掲載</li>
+            <li>基本デザインテンプレート</li>
+            <li>月次レポート</li>
+          </ul>
+          <a href="#contact" class="pricing-cta secondary">お問い合わせ</a>
+        </div>
+        <div class="pricing-card featured">
+          <h3>プロフェッショナル</h3>
+          <div class="price">¥98,000<small>/月</small></div>
+          <ul>
+            <li>3業界テーマまで</li>
+            <li>毎日自動更新（朝刊・夕刊）</li>
+            <li>Web + メールニュースレター</li>
+            <li>カスタムデザイン</li>
+            <li>読者分析ダッシュボード</li>
+            <li>優先サポート</li>
+          </ul>
+          <a href="#contact" class="pricing-cta primary">お問い合わせ</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Form -->
+  <section class="cta-section" id="contact">
+    <div class="section-inner">
+      <h2>まずはお気軽にご相談ください</h2>
+      <p>業界やご要望をお聞かせください。最適なプランをご提案します。</p>
+      <form class="contact-form" action="https://formspree.io/f/mbdzrgal" method="POST">
+        <div class="form-group">
+          <label for="company">会社名</label>
+          <input type="text" id="company" name="company" placeholder="株式会社〇〇" required>
+        </div>
+        <div class="form-group">
+          <label for="name">お名前</label>
+          <input type="text" id="name" name="name" placeholder="山田 太郎" required>
+        </div>
+        <div class="form-group">
+          <label for="email">メールアドレス</label>
+          <input type="email" id="email" name="email" placeholder="example@company.co.jp" required>
+        </div>
+        <div class="form-group">
+          <label for="industry">対象の業界</label>
+          <input type="text" id="industry" name="industry" placeholder="例: 不動産テック、飲食、医療、物流...">
+        </div>
+        <div class="form-group">
+          <label for="plan">興味のあるプラン</label>
+          <select id="plan" name="plan">
+            <option value="">選択してください</option>
+            <option value="starter">スターター（¥29,800/月）</option>
+            <option value="professional">プロフェッショナル（¥98,000/月）</option>
+            <option value="undecided">まだ決まっていない</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">ご相談内容</label>
+          <textarea id="message" name="message" placeholder="ご要望やご質問をお書きください"></textarea>
+        </div>
+        <button type="submit" class="form-submit">送信する</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 業界紙つくーる All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
